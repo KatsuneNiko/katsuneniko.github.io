@@ -65,6 +65,12 @@ export const getChangeStatus = () => {
   return status;
 };
 
+// Force refresh by invalidating cache
+export const invalidateCache = () => {
+  lastCacheTime = null;
+  console.log('🔄 Cache invalidated, will force fetch on next request');
+};
+
 // Fetch GitHub profile data
 export const getGitHubProfile = async () => {
   try {

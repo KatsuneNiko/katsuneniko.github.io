@@ -1,5 +1,5 @@
 import express from 'express';
-import { getGitHubProfile, getChangeStatus } from '../services/githubService.js';
+import { getGitHubProfile, getChangeStatus, invalidateCache } from '../services/githubService.js';
 
 const router = express.Router();
 
@@ -28,8 +28,8 @@ router.get('/changes', async (req, res) => {
 // Force refresh profile (bypass cache)
 router.post('/refresh', async (req, res) => {
   try {
-    // Force cache invalidation by setting last cache time to 0
-    // This will be handled in the next getGitHubProfile call
+    // Invalidate cache to force fresh fetch
+    invalidateCache();
     const profile = await getGitHubProfile();
     res.json({ 
       success: true, 
