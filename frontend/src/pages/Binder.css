@@ -73,13 +73,11 @@
   overflow: hidden;
   border: 2px solid var(--border);
   width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 .cards-row {
   display: grid;
-  grid-template-columns: 120px 1.6fr 1.1fr 1fr 1fr 0.7fr;
+  grid-template-columns: 120px 1.4fr 1fr 1fr 1fr 0.65fr;
   align-items: center;
   gap: 1rem;
   padding: 1rem 1.25rem;
