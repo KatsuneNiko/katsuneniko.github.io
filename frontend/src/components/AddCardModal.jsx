@@ -33,19 +33,11 @@ const AddCardModal = ({ onClose, onCardAdded }) => {
     }
   };
 
-  const getDisplayPrice = (card) => {
-    const priceEntry = card.card_prices?.[0];
-    const tcg = priceEntry ? parseFloat(priceEntry.tcgplayer_price) : NaN;
-    if (!Number.isNaN(tcg)) {
-      return `$${tcg.toFixed(2)}`;
-    }
-
-    const cm = priceEntry ? parseFloat(priceEntry.cardmarket_price) : NaN;
-    if (!Number.isNaN(cm)) {
-      return `$${cm.toFixed(2)}`;
-    }
-
-    return '$0.00';
+  const getSetPrice = (set) => {
+    if (!set.set_price) return '$0.00';
+    const price = parseFloat(set.set_price);
+    if (Number.isNaN(price)) return '$0.00';
+    return `$${price.toFixed(2)}`;
   };
 
   const handleAddCard = async (card, setCode, setRarity) => {
@@ -128,7 +120,7 @@ const AddCardModal = ({ onClose, onCardAdded }) => {
                                 <span className="set-name">{set.set_name}</span>
                                 <span className="set-code">{set.set_code}</span>
                                 <span className="set-rarity">{set.set_rarity}</span>
-                                <span className="set-price">{getDisplayPrice(card)}</span>
+                                <span className="set-price">{getSetPrice(set)}</span>
                               </div>
                               <button 
                                 className="add-button"
