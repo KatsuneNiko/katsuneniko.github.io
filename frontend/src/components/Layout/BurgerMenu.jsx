@@ -36,7 +36,7 @@ const BurgerMenu = ({ isOpen, toggleMenu }) => {
           <>
             <li>
               <Link to="/binder/edit" onClick={handleNavClick}>
-                ✏️ Edit Binder
+                ✏️ Edit Yu-Gi-Oh Binder
               </Link>
             </li>
             <li>

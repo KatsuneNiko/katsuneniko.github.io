@@ -17,7 +17,7 @@ const Layout = ({ children }) => {
       case '/binder':
         return 'Yu-Gi-Oh Binder';
       case '/binder/edit':
-        return 'Yu-Gi-Oh Binder Edit';
+        return 'Edit Yu-Gi-Oh Binder';
       case '/login':
         return 'Login';
       default:

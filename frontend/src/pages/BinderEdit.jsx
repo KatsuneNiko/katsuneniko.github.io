@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { cardService } from '../services/api';
+import { listService } from '../services/listService';
 import AddCardModal from '../components/AddCardModal';
+import ListPanel from '../components/ListPanel';
 import './BinderEdit.css';
 
 const BinderEdit = () => {
@@ -10,9 +12,18 @@ const BinderEdit = () => {
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageCache, setImageCache] = useState({});
+  const [isListOpen, setIsListOpen] = useState(false);
+  const [cardsInList, setCardsInList] = useState({});
 
   useEffect(() => {
     fetchCards();
+
+    // Subscribe to list changes
+    const unsubscribe = listService.subscribe(() => {
+      updateCardsInList();
+    });
+
+    return unsubscribe;
   }, []);
 
   useEffect(() => {
@@ -41,12 +52,26 @@ const BinderEdit = () => {
       const data = await cardService.getAllCards(search);
       setCards(data);
       setError(null);
+      
+      // Update max quantities in list when cards change
+      listService.updateMaxQuantities(data);
+      updateCardsInList();
     } catch (err) {
       setError('Failed to load cards');
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateCardsInList = () => {
+    const list = listService.getList();
+    const inList = {};
+    list.forEach(item => {
+      const key = `${item.id}-${item.set_code}-${item.set_rarity}`;
+      inList[key] = true;
+    });
+    setCardsInList(inList);
   };
 
   const handleSearch = (e) => {
@@ -77,32 +102,147 @@ const BinderEdit = () => {
   const handleDelete = async (cardId) => {
     if (!confirm('Are you sure you want to delete this card?')) {
       return;
+    
+
+  const handleAddToList = (card) => {
+    listService.addToList(card, 1);
+  };
+
+  const handleRemoveFromList = (card) => {
+    listService.removeFromList(card);
+  };
+
+  const isCardInList = (card) => {
+    const key = `${card.id}-${card.set_code}-${card.set_rarity}`;
+    return cardsInList[key] || false;
+  };
+
+  const toggleListPanel = () => {
+    setIsListOpen(!isListOpen);
+  };
+
+  const handleAddListToBinder = async () => {
+    const list = listService.getList();
+    
+    if (list.length === 0) {
+      alert('List is empty. Add cards to the list first.');
+      return;
+    }
+
+    const summary = list.map(item => `• ${item.quantity}x ${item.name} [${item.set_code}]`).join('\n');
+    
+    if (!confirm(`Add the following cards to binder?\n\n${summary}`)) {
+      return;
     }
 
     try {
-      await cardService.deleteCard(cardId);
-      fetchCards(searchTerm);
+      for (const item of list) {
+        // Find the card in the binder
+        const card = cards.find(c => 
+          c.id === item.id && c.set_code === item.set_code && c.set_rarity === item.set_rarity
+        );
+        
+        if (card) {
+          // Increment the card quantity multiple times
+          for (let i = 0; i < item.quantity; i++) {
+            await cardService.incrementCard(card._id);
+          }
+        }
+      }
+      
+      // Clear the list and refresh
+      listService.clearList();
+      await fetchCards(searchTerm);
+      alert('Cards successfully added to binder!');
     } catch (err) {
-      alert('Failed to delete card');
-      console.error(err);
+      console.error('Error adding cards to binder:', err);
+      alert('Failed to add cards to binder. Please try again.');
     }
   };
 
-  const handleCardAdded = () => {
-    fetchCards(searchTerm);
-    setIsModalOpen(false);
-  };
+  const handleRemoveListFromBinder = async () => {
+    const list = listService.getList();
+    
+    if (list.length === 0) {
+      alert('List is empty. Add cards to the list first.');
+      return;
+    }
 
-  const formatPrice = (price) => {
-    if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)}`;
-  };
+    const summary = list.map(item => `• ${item.quantity}x ${item.name} [${item.set_code}]`).join('\n');
+    
+    if (!confirm(`Remove the following cards from binder?\n\n${summary}\n\nNote: Cards reduced to 0 will be deleted.`)) {
+      return;
+    }
 
-  const formatDate = (date) => {
-    if (!date) return '';
-    const diff = Date.now() - new Date(date).getTime();
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    if (hours < 1) return 'Just updated';
+    try {
+      for (const item of list) {
+        // Find the card in the binder
+        const card = cards.find(c => 
+          c.id === item.id && c.set_code === item.set_code && c.set_rarity === item.set_rarity
+        );
+              const inList = isCardInList(card);
+
+              return (
+                <div key={card._id} className="cards-row with-actions" role="row">
+                  <div className="col image-col" role="cell" data-label="Card">
+                    {imageSrc ? (
+                      <img
+                        src={imageSrc}
+                        alt={card.name}
+                        loading="lazy"
+                        className="card-thumb"
+                      />
+                    ) : (
+                      <div className="card-thumb placeholder">No image</div>
+                    )}
+                  </div>
+                  <div className="col name-col" role="cell">
+                    <div className="card-name">{card.name}</div>
+                    <div className="card-meta">#{card.id}</div>
+                  </div>
+                  <div className="col set-col" role="cell" data-label="Set Code">{card.set_code}</div>
+                  <div className="col rarity-col" role="cell" data-label="Rarity">{card.set_rarity}</div>
+                  <div className="col price-col" role="cell" data-label="Price">
+                    <div className="price-value">{formatPrice(card.tcgplayer_price)}</div>
+                    {card.last_updated && (
+                      <div className="timestamp">{formatDate(card.last_updated)}</div>
+                    )}
+                  </div>
+                  <div className="col quantity-col" role="cell" data-label="Quantity">
+                    <div className="quantity-controls">
+                      <button 
+                        className="qty-arrow"
+                        onClick={() => handleIncrement(card._id)}
+                        title="Add one copy"
+                      >
+                        ▲
+                      </button>
+                      <span className="qty-display">×{card.quantity}</span>
+                      <button 
+                        className="qty-arrow"
+                        onClick={() => handleDecrement(card._id)}
+                        title="Remove one copy"
+                      >
+                        ▼
+                      </button>
+                    </div>
+                  </div>
+                  <div className="col actions-col" role="cell" data-label="Actions">
+                    <div className="card-actions">
+                      <button 
+                        className="action-button add-to-list"
+                        onClick={() => handleAddToList(card)}
+                        title="Add to list"
+                      >
+                        ➕ Add to List
+                      </button>
+                      <button 
+                        className="action-button remove-from-list"
+                        onClick={() => handleRemoveFromList(card)}
+                        disabled={!inList}
+                        title="Remove from list"
+                      >
+                        ➖ Remove from Listed';
     if (hours < 24) return `${hours}h ago`;
     const days = Math.floor(hours / 24);
     return `${days}d ago`;
@@ -120,6 +260,14 @@ const BinderEdit = () => {
           <input
             type="text"
             placeholder="Search cards by name..."
+
+      <ListPanel 
+        isOpen={isListOpen}
+        togglePanel={toggleListPanel}
+        showBinderActions={true}
+        onAddToBinder={handleAddListToBinder}
+        onRemoveFromBinder={handleRemoveListFromBinder}
+      />
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"

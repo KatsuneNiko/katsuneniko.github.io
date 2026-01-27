@@ -171,26 +171,84 @@
   font-weight: 500;
 }
 
-.card-actions {
+/* Quantity Controls with Arrows */
+.quantity-controls {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.action-button {
-  flex: 1;
-  min-width: 140px;
-  padding: 0.625rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 700;
+.qty-arrow {
+  width: 32px;
+  height: 26px;
+  border: 1px solid #ccc;
+  background: white;
   cursor: pointer;
-  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: #333;
+}
+
+.qty-arrow:hover {
+  background: var(--success);
+  color: white;
+  border-color: var(--success);
+  transform: scale(1.05);
+}
+
+.qty-display {
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 0.25rem 0;
+  min-width: 32px;
+  text-align: center;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+}
+
+.action-button {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.action-button.add-to-list {
+  background: #007bff;
+  color: white;
+}
+
+.action-button.add-to-list:hover {
+  background: #0056b3;
+}
+
+.action-button.remove-from-list {
+  background: #6c757d;
+  color: white;
+}
+
+.action-button.remove-from-list:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.action-button.remove-from-list:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .action-button.increment {

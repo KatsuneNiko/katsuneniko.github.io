@@ -85,6 +85,10 @@
   justify-items: center;
 }
 
+.cards-row.with-actions {
+  grid-template-columns: 120px 1.4fr 1fr 1fr 1fr 0.65fr 1.5fr;
+}
+
 .cards-row:last-of-type {
   border-bottom: none;
 }
@@ -177,6 +181,48 @@
   color: var(--text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
+}
+
+/* List Actions */
+.list-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.action-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.add-to-list {
+  background: #007bff;
+  color: white;
+}
+
+.add-to-list:hover {
+  background: #0056b3;
+}
+
+.remove-from-list {
+  background: #6c757d;
+  color: white;
+}
+
+.remove-from-list:hover:not(:disabled) {
+  background: #5a6268;
+}
+
+.remove-from-list:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .empty-state {
