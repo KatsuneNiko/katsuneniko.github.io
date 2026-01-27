@@ -124,18 +124,6 @@
   text-align: center;
 }
 
-.image-col,
-.name-col,
-.set-col {
-  justify-self: start;
-}
-
-.rarity-col,
-.price-col,
-.quantity-col {
-  justify-self: end;
-}
-
 .image-col {
   align-items: center;
 }
