@@ -105,6 +105,16 @@
   text-align: center;
 }
 
+/* Force header cells to center despite row alignment rules */
+.cards-header .image-col,
+.cards-header .name-col,
+.cards-header .set-col,
+.cards-header .rarity-col,
+.cards-header .price-col,
+.cards-header .quantity-col {
+  justify-self: center;
+}
+
 .col {
   color: var(--text-primary);
   display: flex;
