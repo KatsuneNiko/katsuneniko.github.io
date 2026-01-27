@@ -98,6 +98,8 @@
 .cards-header .col {
   display: flex;
   align-items: center;
+  justify-self: center;
+  text-align: center;
 }
 
 .col {
