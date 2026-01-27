@@ -283,12 +283,14 @@
 
 .list-actions {
   display: flex;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
 }
 
 .list-action-btn {
   flex: 1;
+  min-width: 0;
   padding: 0.6rem;
   font-size: 0.9rem;
   border: none;
@@ -296,6 +298,9 @@
   cursor: pointer;
   font-weight: 600;
   transition: all 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .export-btn {
