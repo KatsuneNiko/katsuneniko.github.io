@@ -78,6 +78,16 @@ export const githubService = {
     const response = await api.get('/github/profile');
     return response.data;
   },
+  
+  checkForChanges: async () => {
+    const response = await api.get('/github/changes');
+    return response.data;
+  },
+  
+  refreshProfile: async () => {
+    const response = await api.post('/github/refresh');
+    return response.data;
+  }
 };
 
 export default api;

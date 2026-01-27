@@ -6,9 +6,29 @@ const Home = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const [updateNotification, setUpdateNotification] = useState(false);
 
   useEffect(() => {
     fetchProfile();
+    
+    // Set up periodic check for changes (every 5 minutes)
+    const changeCheckInterval = setInterval(async () => {
+      try {
+        const { hasChanged } = await githubService.checkForChanges();
+        if (hasChanged) {
+          setUpdateNotification(true);
+          // Auto-refresh after showing notification for 2 seconds
+          setTimeout(() => {
+            handleRefresh();
+          }, 2000);
+        }
+      } catch (err) {
+        console.error('Error checking for changes:', err);
+      }
+    }, 5 * 60 * 1000); // Check every 5 minutes
+
+    return () => clearInterval(changeCheckInterval);
   }, []);
 
   const fetchProfile = async () => {
@@ -17,11 +37,27 @@ const Home = () => {
       const data = await githubService.getProfile();
       setProfile(data);
       setError(null);
+      setUpdateNotification(false);
     } catch (err) {
       setError('Failed to load GitHub profile');
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRefresh = async () => {
+    try {
+      setRefreshing(true);
+      const { profile: updatedProfile } = await githubService.refreshProfile();
+      setProfile(updatedProfile);
+      setError(null);
+      setUpdateNotification(false);
+    } catch (err) {
+      setError('Failed to refresh GitHub profile');
+      console.error(err);
+    } finally {
+      setRefreshing(false);
     }
   };
 
@@ -37,6 +73,9 @@ const Home = () => {
     return (
       <div className="home-container">
         <div className="error">{error}</div>
+        <button onClick={handleRefresh} className="retry-button">
+          Retry
+        </button>
       </div>
     );
   }
@@ -47,14 +86,32 @@ const Home = () => {
 
   return (
     <div className="home-container">
+      {updateNotification && (
+        <div className="update-notification">
+          ✨ GitHub profile updated! Refreshing...
+        </div>
+      )}
+      
       <div className="profile-section">
-        <img 
-          src={profile.avatar_url} 
-          alt={profile.name} 
-          className="profile-avatar"
-        />
-        <h2 className="profile-name">{profile.name}</h2>
-        {profile.bio && <p className="profile-bio">{profile.bio}</p>}
+        <div className="profile-header">
+          <img 
+            src={profile.avatar_url} 
+            alt={profile.name} 
+            className="profile-avatar"
+          />
+          <div className="profile-info-wrapper">
+            <h2 className="profile-name">{profile.name}</h2>
+            {profile.bio && <p className="profile-bio">{profile.bio}</p>}
+          </div>
+          <button 
+            onClick={handleRefresh} 
+            disabled={refreshing}
+            className="refresh-button"
+            title="Refresh GitHub profile"
+          >
+            {refreshing ? '⟳ Refreshing...' : '↻ Refresh'}
+          </button>
+        </div>
         
         <div className="profile-stats">
           <div className="stat">
@@ -81,14 +138,6 @@ const Home = () => {
         <a 
           href={profile.html_url} 
           target="_blank" 
-          rel="noopener noreferrer"
-          className="profile-link"
-        >
-          View GitHub Profile →
-        </a>
-      </div>
-
-      <div className="repos-section">
         <h3>Recent Repositories</h3>
         <div className="repos-grid">
           {profile.repos && profile.repos.map((repo, index) => (

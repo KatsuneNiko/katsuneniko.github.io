@@ -1,4 +1,5 @@
 import axios from 'axios';
+import crypto from 'crypto';
 
 const GITHUB_API = 'https://api.github.com';
 const USERNAME = 'KatsuneNiko';
@@ -6,6 +7,8 @@ const USERNAME = 'KatsuneNiko';
 // Cache for GitHub data
 let cachedProfile = null;
 let lastCacheTime = null;
+let lastProfileHash = null;
+let hasChanges = false;
 
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 
@@ -13,6 +16,53 @@ const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const isCacheValid = () => {
   if (!lastCacheTime) return false;
   return (Date.now() - lastCacheTime) < CACHE_DURATION;
+};
+
+// Generate hash of profile data to detect changes
+const generateProfileHash = (profile) => {
+  const dataToHash = JSON.stringify({
+    name: profile.name,
+    bio: profile.bio,
+    public_repos: profile.public_repos,
+    followers: profile.followers,
+    following: profile.following,
+    location: profile.location,
+    blog: profile.blog,
+    twitter_username: profile.twitter_username,
+    avatar_url: profile.avatar_url,
+    repos: profile.repos.map(r => ({
+      name: r.name,
+      description: r.description,
+      stargazers_count: r.stargazers_count,
+      forks_count: r.forks_count,
+      language: r.language
+    }))
+  });
+  return crypto.createHash('sha256').update(dataToHash).digest('hex');
+};
+
+// Check if profile has changed since last fetch
+const checkForChanges = (newHash) => {
+  if (!lastProfileHash) {
+    lastProfileHash = newHash;
+    hasChanges = false;
+    return false;
+  }
+  
+  const changed = newHash !== lastProfileHash;
+  if (changed) {
+    console.log('🔔 GitHub profile changes detected!');
+    hasChanges = true;
+    lastProfileHash = newHash;
+  }
+  return changed;
+};
+
+// Get change status and reset flag
+export const getChangeStatus = () => {
+  const status = hasChanges;
+  hasChanges = false; // Reset after reading
+  return status;
 };
 
 // Fetch GitHub profile data
@@ -70,10 +120,17 @@ export const getGitHubProfile = async () => {
       }))
     };
 
+    // Check for changes and generate hash
+    const profileHash = generateProfileHash(cachedProfile);
+    const changed = checkForChanges(profileHash);
+
     lastCacheTime = Date.now();
     console.log('✅ GitHub profile cached successfully');
 
-    return cachedProfile;
+    return {
+      ...cachedProfile,
+      hasChanged: changed
+    };
   } catch (error) {
     console.error('❌ Error fetching GitHub profile:', error.message);
     

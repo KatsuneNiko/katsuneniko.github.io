@@ -11,6 +11,14 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  githubProfileHash: {
+    type: String,
+    default: null
+  },
+  githubProfileLastUpdated: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true
