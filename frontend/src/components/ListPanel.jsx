@@ -163,7 +163,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
                   Clear All Items
                 </button>
 
-                <div className="list-actions">
+                <div className="list-import-export-actions">
                   <button className="list-action-btn export-btn" onClick={handleExport}>
                     📤 Export
                   </button>

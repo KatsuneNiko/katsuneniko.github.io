@@ -281,7 +281,7 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 
-.list-actions {
+.list-import-export-actions {
   display: flex;
   flex-wrap: nowrap;
   gap: 0.5rem;
