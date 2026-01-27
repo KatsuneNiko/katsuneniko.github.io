@@ -46,7 +46,6 @@
 - `POST /api/cards/:id/increment` - Increment quantity
 - `POST /api/cards/:id/decrement` - Decrement quantity
 - `DELETE /api/cards/:id` - Delete card
-- `POST /api/github/refresh` - Refresh GitHub cache
 
 ## Scheduled Jobs
 

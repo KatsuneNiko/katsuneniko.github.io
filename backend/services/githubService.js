@@ -5,7 +5,6 @@ const USERNAME = 'KatsuneNiko';
 
 // Cache for GitHub data
 let cachedProfile = null;
-let cachedRepos = null;
 let lastCacheTime = null;
 
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
@@ -88,9 +87,3 @@ export const getGitHubProfile = async () => {
   }
 };
 
-// Manual cache refresh endpoint
-export const refreshGitHubCache = async () => {
-  lastCacheTime = null;
-  cachedProfile = null;
-  return await getGitHubProfile();
-};

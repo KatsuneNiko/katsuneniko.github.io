@@ -285,7 +285,6 @@ katsuneniko.github.io/
 - **JWT Authentication**: 24-hour token expiry
 - **Rate Limiting**: 
   - 5 login attempts per 15 minutes
-  - 100 API requests per 15 minutes
 - **Environment Variables**: Sensitive data never exposed
 - **CORS**: Restricted to frontend domain only
 - **Protected Routes**: Editor requires authentication
@@ -315,11 +314,9 @@ const USERNAME = 'YourGitHubUsername';
 
 ### Authentication
 - `POST /api/auth/login` - Login and get JWT token
-- `GET /api/auth/verify` - Verify JWT token
 
 ### Cards
 - `GET /api/cards` - Get all cards (with optional search)
-- `GET /api/cards/:id` - Get single card
 - `POST /api/cards` - Add new card (protected)
 - `PATCH /api/cards/:id` - Update card quantity (protected)
 - `POST /api/cards/:id/increment` - Increment quantity (protected)
@@ -329,7 +326,6 @@ const USERNAME = 'YourGitHubUsername';
 
 ### GitHub
 - `GET /api/github/profile` - Get cached GitHub profile
-- `POST /api/github/refresh` - Refresh GitHub cache (protected)
 
 ## 🐛 Troubleshooting
 

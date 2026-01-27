@@ -51,27 +51,4 @@ router.post('/login', loginLimiter, async (req, res) => {
   }
 });
 
-// Verify token route
-router.get('/verify', async (req, res) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ valid: false });
-  }
-
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    res.json({ 
-      valid: true, 
-      user: {
-        id: verified.userId,
-        username: verified.username
-      }
-    });
-  } catch (error) {
-    res.status(403).json({ valid: false });
-  }
-});
-
 export default router;

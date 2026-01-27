@@ -36,16 +36,6 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('token');
   },
-  
-  verifyToken: async () => {
-    try {
-      const response = await api.get('/auth/verify');
-      return response.data.valid;
-    } catch (error) {
-      return false;
-    }
-  },
-  
   isAuthenticated: () => {
     return !!localStorage.getItem('token');
   }
@@ -57,22 +47,10 @@ export const cardService = {
     const response = await api.get(`/cards${search ? `?search=${search}` : ''}`);
     return response.data;
   },
-  
-  getCard: async (id) => {
-    const response = await api.get(`/cards/${id}`);
-    return response.data;
-  },
-  
   addCard: async (cardData) => {
     const response = await api.post('/cards', cardData);
     return response.data;
   },
-  
-  updateCard: async (id, quantity) => {
-    const response = await api.patch(`/cards/${id}`, { quantity });
-    return response.data;
-  },
-  
   incrementCard: async (id) => {
     const response = await api.post(`/cards/${id}/increment`);
     return response.data;
@@ -100,11 +78,6 @@ export const githubService = {
     const response = await api.get('/github/profile');
     return response.data;
   },
-  
-  refreshCache: async () => {
-    const response = await api.post('/github/refresh');
-    return response.data;
-  }
 };
 
 export default api;

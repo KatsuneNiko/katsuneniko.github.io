@@ -112,17 +112,3 @@ export const updateCardPrice = async (setCode) => {
 };
 
 // Search cached cards by name
-export const searchCardsByName = async (name, limit = 50) => {
-  try {
-    const cards = await CardInfo.find({
-      name: { $regex: name, $options: 'i' }
-    })
-    .limit(limit)
-    .select('id name type desc card_sets card_images');
-
-    return cards;
-  } catch (error) {
-    console.error('Error searching cards:', error.message);
-    return [];
-  }
-};
