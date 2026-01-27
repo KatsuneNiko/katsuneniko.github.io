@@ -85,6 +85,26 @@
 .list-empty-hint {
   font-size: 0.9rem;
   color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.empty-import-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--success);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+}
+
+.empty-import-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
 /* List Items */

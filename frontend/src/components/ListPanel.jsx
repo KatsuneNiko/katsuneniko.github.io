@@ -100,7 +100,10 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
           {list.length === 0 ? (
             <div className="list-empty">
               <p>Your list is empty</p>
-              <p className="list-empty-hint">Add cards from the binder to get started</p>
+              <p className="list-empty-hint">Add cards from the binder or import a list to get started</p>
+              <button className="empty-import-btn" onClick={handleImport}>
+                📥 Import List
+              </button>
             </div>
           ) : (
             <>
