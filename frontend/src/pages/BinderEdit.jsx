@@ -5,14 +5,13 @@ import AddCardModal from '../components/AddCardModal';
 import ListPanel from '../components/ListPanel';
 import './BinderEdit.css';
 
-const BinderEdit = () => {
+const BinderEdit = ({ isListOpen, toggleList }) => {
   const [cards, setCards] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageCache, setImageCache] = useState({});
-  const [isListOpen, setIsListOpen] = useState(false);
   const [cardsInList, setCardsInList] = useState({});
 
   useEffect(() => {
@@ -129,10 +128,6 @@ const BinderEdit = () => {
   const isCardInList = (card) => {
     const key = `${card.id}-${card.set_code}-${card.set_rarity}`;
     return cardsInList[key] || false;
-  };
-
-  const toggleListPanel = () => {
-    setIsListOpen(!isListOpen);
   };
 
   const handleAddListToBinder = async () => {
@@ -378,7 +373,7 @@ const BinderEdit = () => {
 
       <ListPanel 
         isOpen={isListOpen}
-        togglePanel={toggleListPanel}
+        onClose={toggleList}
         showBinderActions={true}
         onAddToBinder={handleAddListToBinder}
         onRemoveFromBinder={handleRemoveListFromBinder}

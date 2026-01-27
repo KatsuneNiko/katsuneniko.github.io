@@ -4,13 +4,12 @@ import { listService } from '../services/listService';
 import ListPanel from '../components/ListPanel';
 import './Binder.css';
 
-const Binder = () => {
+const Binder = ({ isListOpen, toggleList }) => {
   const [cards, setCards] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageCache, setImageCache] = useState({});
-  const [isListOpen, setIsListOpen] = useState(false);
   const [cardsInList, setCardsInList] = useState({});
 
   useEffect(() => {
@@ -83,10 +82,6 @@ const Binder = () => {
   const isCardInList = (card) => {
     const key = `${card.id}-${card.set_code}-${card.set_rarity}`;
     return cardsInList[key] || false;
-  };
-
-  const toggleListPanel = () => {
-    setIsListOpen(!isListOpen);
   };
 
   const handleSearch = (e) => {
@@ -215,7 +210,7 @@ const Binder = () => {
 
       <ListPanel 
         isOpen={isListOpen}
-        togglePanel={toggleListPanel}
+        onClose={toggleList}
         showBinderActions={false}
       />
     </div>

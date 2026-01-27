@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { listService } from '../services/listService';
 import './ListPanel.css';
 
-const ListPanel = ({ isOpen, togglePanel, showBinderActions = false, onAddToBinder, onRemoveFromBinder }) => {
+const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, onRemoveFromBinder }) => {
   const [list, setList] = useState([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
@@ -125,20 +125,20 @@ const ListPanel = ({ isOpen, togglePanel, showBinderActions = false, onAddToBind
                       <div className="quantity-controls">
                         <button 
                           className="qty-btn"
-                          onClick={() => handleQuantityChange(card, -1)}
-                          disabled={card.quantity <= 1}
-                          aria-label="Decrease quantity"
-                        >
-                          ▼
-                        </button>
-                        <span className="qty-value">{card.quantity}</span>
-                        <button 
-                          className="qty-btn"
                           onClick={() => handleQuantityChange(card, 1)}
                           disabled={card.quantity >= card.max_quantity}
                           aria-label="Increase quantity"
                         >
                           ▲
+                        </button>
+                        <span className="qty-value">{card.quantity}</span>
+                        <button 
+                          className="qty-btn"
+                          onClick={() => handleQuantityChange(card, -1)}
+                          disabled={card.quantity <= 1}
+                          aria-label="Decrease quantity"
+                        >
+                          ▼
                         </button>
                       </div>
                       <button 
@@ -193,15 +193,6 @@ const ListPanel = ({ isOpen, togglePanel, showBinderActions = false, onAddToBind
           )}
         </div>
       </div>
-
-      {/* Toggle Button */}
-      <button 
-        className={`list-toggle ${isOpen ? 'open' : ''}`}
-        onClick={togglePanel}
-        aria-label={isOpen ? 'Close list' : 'Open list'}
-      >
-        {isOpen ? '→' : '←'}
-      </button>
 
       {/* Export Modal */}
       {showExportModal && (

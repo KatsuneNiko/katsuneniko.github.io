@@ -5,7 +5,7 @@ import Footer from './Footer';
 import BurgerMenu from './BurgerMenu';
 import './Layout.css';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, showListToggle, isListOpen, toggleList }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -33,13 +33,20 @@ const Layout = ({ children }) => {
     <div className="layout">
       <BurgerMenu isOpen={isMenuOpen} toggleMenu={toggleMenu} />
       <div className={`layout-content ${isMenuOpen ? 'menu-open' : ''}`}>
-        <Header title={getPageTitle()} toggleMenu={toggleMenu} />
+        <Header 
+          title={getPageTitle()} 
+          toggleMenu={toggleMenu}
+          showListToggle={showListToggle}
+          isListOpen={isListOpen}
+          toggleList={toggleList}
+        />
         <main className="main-content">
           {children}
         </main>
         <Footer />
       </div>
       {isMenuOpen && <div className="overlay" onClick={toggleMenu}></div>}
+      {isListOpen && <div className="overlay list-overlay" onClick={toggleList}></div>}
     </div>
   );
 };

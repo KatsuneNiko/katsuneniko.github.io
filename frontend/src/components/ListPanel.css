@@ -349,38 +349,6 @@
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
 
-/* Toggle Button */
-.list-toggle {
-  position: fixed;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 60px;
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  border-radius: 8px 0 0 8px;
-  cursor: pointer;
-  font-size: 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: -2px 2px 8px var(--shadow);
-  transition: all 0.3s;
-  z-index: 998;
-}
-
-.list-toggle:hover {
-  background: var(--primary-hover);
-  right: 8px;
-  box-shadow: -4px 4px 12px var(--shadow);
-}
-
-.list-toggle.open {
-  right: 410px;
-}
-
 /* Modals */
 .modal-overlay {
   position: fixed;
@@ -615,10 +583,6 @@
   .list-panel {
     width: 100%;
     right: -100%;
-  }
-
-  .list-toggle.open {
-    right: calc(100% - 40px);
   }
 
   .modal-content {
