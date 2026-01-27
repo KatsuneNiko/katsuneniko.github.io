@@ -137,7 +137,15 @@ const Home = () => {
         
         <a 
           href={profile.html_url} 
-          target="_blank" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="profile-link"
+        >
+          View GitHub Profile →
+        </a>
+      </div>
+
+      <div className="repos-section">
         <h3>Recent Repositories</h3>
         <div className="repos-grid">
           {profile.repos && profile.repos.map((repo, index) => (
