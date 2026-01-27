@@ -1,0 +1,88 @@
+.burger-menu {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 280px;
+  height: 100vh;
+  background-color: var(--surface);
+  box-shadow: 2px 0 12px var(--shadow);
+  z-index: 1000;
+  transition: left 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.burger-menu.open {
+  left: 0;
+}
+
+.menu-header {
+  padding: 1.5rem;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.menu-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 1rem 0;
+  flex: 1;
+}
+
+.menu-list li {
+  margin: 0;
+}
+
+.menu-list a,
+.menu-list button {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  font-size: 1.1rem;
+  width: 100%;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.menu-list a:hover,
+.menu-list button:hover {
+  background-color: var(--surface-light);
+  color: var(--primary-color);
+}
+
+.menu-list a:active,
+.menu-list button:active {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+.logout-btn {
+  color: var(--error) !important;
+}
+
+.logout-btn:hover {
+  background-color: rgba(239, 68, 68, 0.1) !important;
+}
+
+@media (max-width: 768px) {
+  .burger-menu {
+    width: 260px;
+    left: -260px;
+  }
+
+  .menu-list a,
+  .menu-list button {
+    font-size: 1rem;
+    padding: 0.875rem 1.25rem;
+  }
+}

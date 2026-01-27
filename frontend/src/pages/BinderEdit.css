@@ -1,0 +1,146 @@
+.binder-edit-container {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.search-section {
+  background-color: var(--surface);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px var(--shadow);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.search-form {
+  display: flex;
+  gap: 1rem;
+  flex: 1;
+}
+
+.add-card-button {
+  padding: 0.875rem 1.75rem;
+  background-color: var(--success);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.add-card-button:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.add-first-card-button {
+  padding: 1rem 2rem;
+  background-color: var(--success);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.add-first-card-button:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.card-item.edit-mode {
+  border: 2px solid var(--border);
+}
+
+.card-item.edit-mode:hover {
+  border-color: var(--success);
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.action-button {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.625rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.action-button.increment {
+  background-color: var(--success);
+  color: white;
+}
+
+.action-button.increment:hover {
+  background-color: #059669;
+  transform: translateY(-2px);
+}
+
+.action-button.decrement {
+  background-color: var(--warning);
+  color: white;
+}
+
+.action-button.decrement:hover {
+  background-color: #d97706;
+  transform: translateY(-2px);
+}
+
+.action-button.delete {
+  background-color: var(--error);
+  color: white;
+}
+
+.action-button.delete:hover {
+  background-color: #dc2626;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+  }
+
+  .search-form {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .add-card-button {
+    width: 100%;
+  }
+
+  .action-button {
+    min-width: 100%;
+  }
+}
