@@ -92,7 +92,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
         <div className="list-panel-content">
           <div className="list-header">
             <h3>Card List</h3>
-            <button className="close-panel" onClick={togglePanel} aria-label="Close list">
+            <button className="close-panel" onClick={onClose} aria-label="Close list">
               →
             </button>
           </div>
