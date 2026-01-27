@@ -93,20 +93,26 @@ export const updateCardPrice = async (setCode) => {
       'card_sets.set_code': setCode
     });
 
-    if (!cardInfo || !cardInfo.card_sets) {
+    if (!cardInfo) {
       return null;
     }
 
-    // Find the specific set within the card
-    const cardSet = cardInfo.card_sets.find(set => set.set_code === setCode);
-    
+    // 1) Prefer tcgplayer_price from card_prices
+    const tcgPriceString = cardInfo.card_prices?.[0]?.tcgplayer_price;
+    const tcgPrice = tcgPriceString ? parseFloat(tcgPriceString) : null;
+
+    if (tcgPrice !== null && !Number.isNaN(tcgPrice)) {
+      return tcgPrice;
+    }
+
+    // 2) Fallback to set_price matched by set_code
+    const cardSet = cardInfo.card_sets?.find(set => set.set_code === setCode);
     if (!cardSet || !cardSet.set_price) {
       return null;
     }
 
-    // Parse the price (it comes as a string)
-    const price = parseFloat(cardSet.set_price);
-    return isNaN(price) ? null : price;
+    const setPrice = parseFloat(cardSet.set_price);
+    return Number.isNaN(setPrice) ? null : setPrice;
   } catch (error) {
     console.error('Error fetching card price:', error.message);
     return null;
