@@ -148,8 +148,14 @@ class ListService {
         continue;
       }
 
-      const [id, name, set_code, set_rarity, quantityStr] = parts;
+      const [idStr, name, set_code, set_rarity, quantityStr] = parts;
+      const id = parseInt(idStr, 10);
       const quantity = parseInt(quantityStr, 10);
+
+      if (isNaN(id)) {
+        results.warnings.push(`Line ${lineNum}: Invalid ID "${idStr}" - skipped`);
+        continue;
+      }
 
       if (isNaN(quantity) || quantity < 1) {
         results.warnings.push(`Line ${lineNum}: Invalid quantity "${quantityStr}" - skipped`);
