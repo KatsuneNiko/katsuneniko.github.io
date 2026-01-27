@@ -44,15 +44,26 @@
 .close-panel {
   background: none;
   border: none;
-  font-size: 1.5rem;
   cursor: pointer;
   color: var(--text-secondary);
   padding: 0.25rem 0.5rem;
   transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-panel:hover {
   color: var(--primary-color);
+}
+
+.close-panel .close-triangle {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 14px 10px 0;
+  border-color: transparent currentColor transparent transparent;
+  transition: all 0.3s ease;
 }
 
 /* Empty State */

@@ -210,7 +210,7 @@ const BinderEdit = ({ isListOpen, toggleList }) => {
 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)}`;
+    return `$${price.toFixed(2)} ea`;
   };
 
   const formatDate = (date) => {

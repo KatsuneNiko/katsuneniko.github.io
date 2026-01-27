@@ -82,7 +82,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)}`;
+    return `$${price.toFixed(2)} ea`;
   };
 
   return (
@@ -93,7 +93,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
           <div className="list-header">
             <h3>Card List</h3>
             <button className="close-panel" onClick={onClose} aria-label="Close list">
-              →
+              <span className="close-triangle"></span>
             </button>
           </div>
 
@@ -119,7 +119,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
                       <div className="list-item-meta">
                         {card.set_code} • {card.set_rarity}
                       </div>
-                      <div className="list-item-price">{formatPrice(card.tcgplayer_price)} each</div>
+                      <div className="list-item-price">{formatPrice(card.tcgplayer_price)}</div>
                     </div>
                     <div className="list-item-controls">
                       <div className="quantity-controls">

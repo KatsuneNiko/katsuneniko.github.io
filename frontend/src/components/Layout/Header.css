@@ -63,16 +63,16 @@
   transition: all 0.3s ease;
 }
 
-/* Closed state - triangle points left */
+/* Closed state - triangle points right */
 .list-toggle-icon:not(.open) .triangle {
-  border-width: 12px 0 12px 16px;
-  border-color: transparent transparent transparent var(--text-primary);
-}
-
-/* Open state - triangle points right */
-.list-toggle-icon.open .triangle {
   border-width: 12px 16px 12px 0;
   border-color: transparent var(--text-primary) transparent transparent;
+}
+
+/* Open state - triangle points left */
+.list-toggle-icon.open .triangle {
+  border-width: 12px 0 12px 16px;
+  border-color: transparent transparent transparent var(--text-primary);
 }
 
 @media (max-width: 768px) {
