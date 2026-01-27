@@ -24,7 +24,7 @@ const cardSchema = new mongoose.Schema({
     default: 1,
     min: 0
   },
-  set_price: {
+  tcgplayer_price: {
     type: Number,
     default: 0
   },

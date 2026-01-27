@@ -63,7 +63,7 @@
   set_code: String,     // Set code (e.g., "LOB-EN001")
   set_rarity: String,   // Rarity (e.g., "Ultra Rare")
   quantity: Number,     // Quantity owned
-  set_price: Number,    // TCGPlayer price
+  tcgplayer_price: Number,    // Cached price (tcgplayer then cardmarket fallback)
   last_updated: Date    // Last price update
 }
 ```

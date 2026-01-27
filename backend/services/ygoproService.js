@@ -71,7 +71,7 @@ export const updatePricesDaily = async () => {
       if (hoursSinceUpdate > 24) {
         const newPrice = await updateCardPrice(card.set_code);
         if (newPrice !== null) {
-          card.set_price = newPrice;
+          card.tcgplayer_price = newPrice;
           card.last_updated = now;
           await card.save();
           updatedCount++;
@@ -98,21 +98,20 @@ export const updateCardPrice = async (setCode) => {
     }
 
     // 1) Prefer tcgplayer_price from card_prices
-    const tcgPriceString = cardInfo.card_prices?.[0]?.tcgplayer_price;
-    const tcgPrice = tcgPriceString ? parseFloat(tcgPriceString) : null;
+    const priceEntry = cardInfo.card_prices?.[0] ?? {};
+    const tcgPrice = parseFloat(priceEntry.tcgplayer_price);
 
-    if (tcgPrice !== null && !Number.isNaN(tcgPrice)) {
+    if (!Number.isNaN(tcgPrice)) {
       return tcgPrice;
     }
 
-    // 2) Fallback to set_price matched by set_code
-    const cardSet = cardInfo.card_sets?.find(set => set.set_code === setCode);
-    if (!cardSet || !cardSet.set_price) {
-      return null;
+    // 2) Fallback to cardmarket_price from card_prices
+    const cmPrice = parseFloat(priceEntry.cardmarket_price);
+    if (!Number.isNaN(cmPrice)) {
+      return cmPrice;
     }
 
-    const setPrice = parseFloat(cardSet.set_price);
-    return Number.isNaN(setPrice) ? null : setPrice;
+    return null;
   } catch (error) {
     console.error('Error fetching card price:', error.message);
     return null;

@@ -99,7 +99,7 @@ const Binder = () => {
                   </div>
                   <div className="card-detail">
                     <span className="detail-label">TCGPlayer Price:</span>
-                    <span className="detail-value price">{formatPrice(card.set_price)}</span>
+                    <span className="detail-value price">{formatPrice(card.tcgplayer_price)}</span>
                   </div>
                   {card.last_updated && (
                     <div className="card-detail">

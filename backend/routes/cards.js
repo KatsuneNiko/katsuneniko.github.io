@@ -29,10 +29,10 @@ router.get('/', async (req, res) => {
           // Update price from cache
           const updatedPrice = await updateCardPrice(card.set_code);
           if (updatedPrice !== null) {
-            card.set_price = updatedPrice;
+            card.tcgplayer_price = updatedPrice;
             card.last_updated = now;
             await card.save();
-            cardObj.set_price = updatedPrice;
+            cardObj.tcgplayer_price = updatedPrice;
             cardObj.last_updated = now;
           }
         }
@@ -96,7 +96,7 @@ router.post('/', authenticateToken, async (req, res) => {
       set_code,
       set_rarity,
       quantity,
-      set_price: price || 0,
+      tcgplayer_price: price || 0,
       last_updated: new Date()
     });
 
