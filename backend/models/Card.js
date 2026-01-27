@@ -28,6 +28,14 @@ const cardSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  image_url: {
+    type: String,
+    default: ''
+  },
+  image_url_small: {
+    type: String,
+    default: ''
+  },
   last_updated: {
     type: Date,
     default: Date.now

@@ -9,10 +9,31 @@ const BinderEdit = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageCache, setImageCache] = useState({});
 
   useEffect(() => {
     fetchCards();
   }, []);
+
+  useEffect(() => {
+    if (!cards.length) return;
+
+    const newEntries = {};
+
+    cards.forEach((card) => {
+      const key = `${card.id}-${card.set_code}`;
+      const url = card.image_url_small || card.image_url;
+      if (url && !imageCache[key]) {
+        const img = new Image();
+        img.src = url;
+        newEntries[key] = url;
+      }
+    });
+
+    if (Object.keys(newEntries).length) {
+      setImageCache((prev) => ({ ...prev, ...newEntries }));
+    }
+  }, [cards, imageCache]);
 
   const fetchCards = async (search = '') => {
     try {
@@ -87,6 +108,11 @@ const BinderEdit = () => {
     return `${days}d ago`;
   };
 
+  const getCardImage = (card) => {
+    const key = `${card.id}-${card.set_code}`;
+    return imageCache[key] || card.image_url_small || card.image_url || '';
+  };
+
   return (
     <div className="binder-edit-container">
       <div className="search-section">
@@ -130,64 +156,75 @@ const BinderEdit = () => {
           <div className="cards-count">
             Editing {cards.length} card{cards.length !== 1 ? 's' : ''}
           </div>
-          <div className="cards-grid">
-            {cards.map((card) => (
-              <div key={card._id} className="card-item edit-mode">
-                <div className="card-header">
-                  <h3 className="card-name">{card.name}</h3>
-                  <span className="card-quantity">×{card.quantity}</span>
-                </div>
-                <div className="card-details">
-                  <div className="card-detail">
-                    <span className="detail-label">ID:</span>
-                    <span className="detail-value">{card.id}</span>
+          <div className="cards-table" role="table">
+            <div className="cards-row cards-header with-actions" role="row">
+              <div className="col image-col" role="columnheader">Card</div>
+              <div className="col name-col" role="columnheader">Name</div>
+              <div className="col set-col" role="columnheader">Set Code</div>
+              <div className="col rarity-col" role="columnheader">Rarity</div>
+              <div className="col price-col" role="columnheader">Price</div>
+              <div className="col quantity-col" role="columnheader">Qty</div>
+              <div className="col actions-col" role="columnheader">Actions</div>
+            </div>
+
+            {cards.map((card) => {
+              const imageSrc = getCardImage(card);
+
+              return (
+                <div key={card._id} className="cards-row with-actions" role="row">
+                  <div className="col image-col" role="cell" data-label="Card">
+                    {imageSrc ? (
+                      <img
+                        src={imageSrc}
+                        alt={card.name}
+                        loading="lazy"
+                        className="card-thumb"
+                      />
+                    ) : (
+                      <div className="card-thumb placeholder">No image</div>
+                    )}
                   </div>
-                  <div className="card-detail">
-                    <span className="detail-label">Set Code:</span>
-                    <span className="detail-value">{card.set_code}</span>
+                  <div className="col name-col" role="cell">
+                    <div className="card-name">{card.name}</div>
+                    <div className="card-meta">#{card.id}</div>
                   </div>
-                  <div className="card-detail">
-                    <span className="detail-label">Rarity:</span>
-                    <span className="detail-value">{card.set_rarity}</span>
+                  <div className="col set-col" role="cell" data-label="Set Code">{card.set_code}</div>
+                  <div className="col rarity-col" role="cell" data-label="Rarity">{card.set_rarity}</div>
+                  <div className="col price-col" role="cell" data-label="Price">
+                    <div className="price-value">{formatPrice(card.tcgplayer_price)}</div>
+                    {card.last_updated && (
+                      <div className="timestamp">{formatDate(card.last_updated)}</div>
+                    )}
                   </div>
-                  <div className="card-detail">
-                    <span className="detail-label">TCGPlayer Price:</span>
-                    <span className="detail-value price">{formatPrice(card.tcgplayer_price)}</span>
-                  </div>
-                  {card.last_updated && (
-                    <div className="card-detail">
-                      <span className="detail-label">Last Updated:</span>
-                      <span className="detail-value timestamp">
-                        {formatDate(card.last_updated)}
-                      </span>
+                  <div className="col quantity-col" role="cell" data-label="Quantity">×{card.quantity}</div>
+                  <div className="col actions-col" role="cell" data-label="Actions">
+                    <div className="card-actions">
+                      <button 
+                        className="action-button increment"
+                        onClick={() => handleIncrement(card._id)}
+                        title="Add one copy"
+                      >
+                        ➕ Add Copy
+                      </button>
+                      <button 
+                        className="action-button decrement"
+                        onClick={() => handleDecrement(card._id)}
+                        title="Remove one copy"
+                      >
+                        ➖ Remove Copy
+                      </button>
+                      <button 
+                        className="action-button delete"
+                        onClick={() => handleDelete(card._id)}
+                        title="Delete card"
+                      >
+                        🗑️ Delete
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
-                <div className="card-actions">
-                  <button 
-                    className="action-button increment"
-                    onClick={() => handleIncrement(card._id)}
-                    title="Add one copy"
-                  >
-                    ➕ Add Copy
-                  </button>
-                  <button 
-                    className="action-button decrement"
-                    onClick={() => handleDecrement(card._id)}
-                    title="Remove one copy"
-                  >
-                    ➖ Remove Copy
-                  </button>
-                  <button 
-                    className="action-button delete"
-                    onClick={() => handleDelete(card._id)}
-                    title="Delete card"
-                  >
-                    🗑️ Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </>
       )}

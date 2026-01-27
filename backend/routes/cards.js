@@ -18,23 +18,68 @@ router.get('/', async (req, res) => {
 
     const cards = await Card.find(query).sort({ name: 1 });
 
+    // Load cached card info once for all cards (images + set prices)
+    const cardInfos = await CardInfo.find({ id: { $in: cards.map((card) => card.id) } })
+      .select('id card_images card_sets');
+    const cardInfoMap = new Map(cardInfos.map((info) => [info.id, info]));
+
     // Update prices if older than 24 hours
     const updatedCards = await Promise.all(
       cards.map(async (card) => {
         const cardObj = card.toObject();
         const now = new Date();
         const hoursSinceUpdate = (now - new Date(card.last_updated)) / (1000 * 60 * 60);
+        const cardInfo = cardInfoMap.get(card.id);
+        let changed = false;
+
+        // Attach cached images if missing
+        const imageSmall = card.image_url_small || cardInfo?.card_images?.[0]?.image_url_small || cardInfo?.card_images?.[0]?.image_url || '';
+        const imageLarge = card.image_url || cardInfo?.card_images?.[0]?.image_url || '';
+
+        if (!card.image_url_small && imageSmall) {
+          card.image_url_small = imageSmall;
+          cardObj.image_url_small = imageSmall;
+          changed = true;
+        } else {
+          cardObj.image_url_small = card.image_url_small || '';
+        }
+
+        if (!card.image_url && imageLarge) {
+          card.image_url = imageLarge;
+          cardObj.image_url = imageLarge;
+          changed = true;
+        } else {
+          cardObj.image_url = card.image_url || '';
+        }
 
         if (hoursSinceUpdate > 24) {
-          // Update price from cache
-          const updatedPrice = await updateCardPrice(card.set_code);
+          // Update price from cached card info when available
+          let updatedPrice = null;
+
+          if (cardInfo?.card_sets?.length) {
+            const matchingSet = cardInfo.card_sets.find((set) => set.set_code === card.set_code);
+            const price = matchingSet?.set_price ? parseFloat(matchingSet.set_price) : null;
+            if (price !== null && !Number.isNaN(price)) {
+              updatedPrice = price;
+            }
+          }
+
+          // Fallback to existing helper if cache lookup failed
+          if (updatedPrice === null) {
+            updatedPrice = await updateCardPrice(card.set_code);
+          }
+
           if (updatedPrice !== null) {
             card.tcgplayer_price = updatedPrice;
             card.last_updated = now;
-            await card.save();
             cardObj.tcgplayer_price = updatedPrice;
             cardObj.last_updated = now;
+            changed = true;
           }
+        }
+
+        if (changed) {
+          await card.save();
         }
 
         return cardObj;
@@ -74,11 +119,29 @@ router.post('/', authenticateToken, async (req, res) => {
       });
     }
 
+    const cardInfo = await CardInfo.findOne({ id }).select('card_images card_sets');
+    const imageSmall = cardInfo?.card_images?.[0]?.image_url_small || cardInfo?.card_images?.[0]?.image_url || '';
+    const imageLarge = cardInfo?.card_images?.[0]?.image_url || '';
+
+    const getSetPriceFromInfo = () => {
+      if (!cardInfo?.card_sets?.length) return null;
+      const matchingSet = cardInfo.card_sets.find((set) => set.set_code === set_code);
+      if (!matchingSet?.set_price) return null;
+      const price = parseFloat(matchingSet.set_price);
+      return Number.isNaN(price) ? null : price;
+    };
+
     // Check if card already exists
     const existingCard = await Card.findOne({ id, set_code });
     if (existingCard) {
       // Update quantity instead of creating duplicate
       existingCard.quantity += quantity;
+      if (!existingCard.image_url_small && imageSmall) {
+        existingCard.image_url_small = imageSmall;
+      }
+      if (!existingCard.image_url && imageLarge) {
+        existingCard.image_url = imageLarge;
+      }
       await existingCard.save();
       return res.json({ 
         message: 'Card quantity updated', 
@@ -87,7 +150,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Get price from cached data
-    const price = await updateCardPrice(set_code);
+    const price = getSetPriceFromInfo() ?? await updateCardPrice(set_code);
 
     // Create new card
     const newCard = new Card({
@@ -97,6 +160,8 @@ router.post('/', authenticateToken, async (req, res) => {
       set_rarity,
       quantity,
       tcgplayer_price: price || 0,
+      image_url: imageLarge,
+      image_url_small: imageSmall,
       last_updated: new Date()
     });
 
