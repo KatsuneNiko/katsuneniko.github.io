@@ -16,6 +16,7 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
   const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [exchangeRate, setExchangeRate] = useState(null);
+  const [isRefreshingPrices, setIsRefreshingPrices] = useState(false);
 
   useEffect(() => {
     fetchCards();
@@ -331,6 +332,27 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
     return imageCache[key] || card.image_url_small || card.image_url || '';
   };
 
+  const handleRefreshAllPrices = async () => {
+    if (!confirm('Refresh all card prices? This may take a moment.')) {
+      return;
+    }
+
+    try {
+      setIsRefreshingPrices(true);
+      const result = await cardService.refreshAllPrices();
+      
+      // Refresh the cards list to show updated prices
+      await fetchCards(searchTerm);
+      
+      alert(result.message || 'Prices refreshed successfully!');
+    } catch (err) {
+      console.error('Error refreshing prices:', err);
+      alert('Failed to refresh prices: ' + (err.response?.data?.error || err.message));
+    } finally {
+      setIsRefreshingPrices(false);
+    }
+  };
+
   return (
     <div className="binder-edit-container">
       <div className="search-section">
@@ -350,7 +372,7 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
           className="add-card-button" 
           onClick={() => setIsModalOpen(true)}
         >
-          ➕ Add New Card
+          Add New Card
         </button>
       </div>
 
@@ -362,12 +384,6 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
         <div className="empty-state">
           <p>No cards found in your binder.</p>
           {searchTerm && <p>Try a different search term.</p>}
-          <button 
-            className="add-first-card-button" 
-            onClick={() => setIsModalOpen(true)}
-          >
-            Add Your First Card
-          </button>
         </div>
       ) : (
         <>
@@ -481,6 +497,14 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
         <div className="total-value-panel">
           <div className="total-value-label">Total Binder Value:</div>
           <div className="total-value-amount">{formatTotalValue(getTotalValue())}</div>
+          <button 
+            className="refresh-prices-button"
+            onClick={handleRefreshAllPrices}
+            disabled={isRefreshingPrices}
+            title="Refresh all card prices from TCGplayer"
+          >
+            {isRefreshingPrices ? 'Refreshing...' : 'Refresh Prices'}
+          </button>
         </div>
       )}
 
@@ -488,6 +512,7 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
         <AddCardModal 
           onClose={() => setIsModalOpen(false)}
           onCardAdded={handleCardAdded}
+          initialSearchTerm={searchTerm}
         />
       )}
 

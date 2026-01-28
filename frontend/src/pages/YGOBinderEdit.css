@@ -44,25 +44,6 @@
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
-.add-first-card-button {
-  padding: 1rem 2rem;
-  background-color: var(--success);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
-}
-
-.add-first-card-button:hover {
-  background-color: #059669;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-}
-
 .cards-table {
   background-color: var(--surface);
   border-radius: 12px;
@@ -360,6 +341,7 @@
   align-items: center;
   border: 2px solid var(--border);
   animation: fadeIn 0.5s ease;
+  gap: 1.5rem;
 }
 
 .total-value-label {
@@ -372,4 +354,30 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--success);
+  flex: 1;
+}
+
+.refresh-prices-button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.refresh-prices-button:hover:not(:disabled) {
+  background-color: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+.refresh-prices-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -69,7 +69,7 @@ export const updatePricesDaily = async () => {
 
       // Only update if older than 24 hours
       if (hoursSinceUpdate > 24) {
-        const newPrice = await updateCardPrice(card.set_code);
+        const newPrice = await updateCardPrice(card.set_code, card.set_rarity);
         if (newPrice !== null) {
           card.tcgplayer_price = newPrice;
           card.last_updated = now;
@@ -85,8 +85,8 @@ export const updatePricesDaily = async () => {
   }
 };
 
-// Get price for a specific card by set code
-export const updateCardPrice = async (setCode) => {
+// Get price for a specific card by set code and rarity
+export const updateCardPrice = async (setCode, setRarity = null) => {
   try {
     // Search for the card in cached data by set_code
     const cardInfo = await CardInfo.findOne({
@@ -97,8 +97,12 @@ export const updateCardPrice = async (setCode) => {
       return null;
     }
 
-    // Find the matching set by set_code and return its set_price
-    const cardSet = cardInfo.card_sets?.find(set => set.set_code === setCode);
+    // Find the matching set by set_code AND set_rarity (if provided)
+    const cardSet = cardInfo.card_sets?.find(set => {
+      if (set.set_code !== setCode) return false;
+      // If rarity is provided, it must match; otherwise, just match set_code
+      return setRarity ? set.set_rarity === setRarity : true;
+    });
     if (!cardSet || !cardSet.set_price) {
       return null;
     }

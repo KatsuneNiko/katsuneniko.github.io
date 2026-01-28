@@ -58,7 +58,9 @@ router.get('/', async (req, res) => {
           let updatedPrice = null;
 
           if (cardInfo?.card_sets?.length) {
-            const matchingSet = cardInfo.card_sets.find((set) => set.set_code === card.set_code);
+            const matchingSet = cardInfo.card_sets.find((set) => 
+              set.set_code === card.set_code && set.set_rarity === card.set_rarity
+            );
             const price = matchingSet?.set_price ? parseFloat(matchingSet.set_price) : null;
             if (price !== null && !Number.isNaN(price)) {
               updatedPrice = price;
@@ -67,9 +69,9 @@ router.get('/', async (req, res) => {
 
           // Fallback to existing helper if cache lookup failed
           if (updatedPrice === null) {
-            updatedPrice = await updateCardPrice(card.set_code);
+            updatedPrice = await updateCardPrice(card.set_code, card.set_rarity);
           }
-
+          
           if (updatedPrice !== null) {
             card.tcgplayer_price = updatedPrice;
             card.last_updated = now;
@@ -112,14 +114,16 @@ router.post('/', authenticateToken, async (req, res) => {
 
     const getSetPriceFromInfo = () => {
       if (!cardInfo?.card_sets?.length) return null;
-      const matchingSet = cardInfo.card_sets.find((set) => set.set_code === set_code);
+      const matchingSet = cardInfo.card_sets.find((set) => 
+        set.set_code === set_code && set.set_rarity === set_rarity
+      );
       if (!matchingSet?.set_price) return null;
       const price = parseFloat(matchingSet.set_price);
       return Number.isNaN(price) ? null : price;
     };
 
-    // Check if card already exists
-    const existingCard = await Card.findOne({ id, set_code });
+    // Check if card already exists (must match id, set_code, AND set_rarity)
+    const existingCard = await Card.findOne({ id, set_code, set_rarity });
     if (existingCard) {
       // Update quantity instead of creating duplicate
       existingCard.quantity += quantity;
@@ -137,7 +141,7 @@ router.post('/', authenticateToken, async (req, res) => {
     }
 
     // Get price from cached data
-    const price = getSetPriceFromInfo() ?? await updateCardPrice(set_code);
+    const price = getSetPriceFromInfo() ?? await updateCardPrice(set_code, set_rarity);
 
     // Create new card
     const newCard = new Card({
@@ -280,6 +284,67 @@ router.get('/exchange-rate/usd-aud', async (req, res) => {
   } catch (error) {
     console.error('Error fetching exchange rate:', error);
     res.status(500).json({ error: 'Failed to fetch exchange rate' });
+  }
+});
+
+// Refresh all card prices (protected route)
+router.post('/refresh-prices', authenticateToken, async (req, res) => {
+  try {
+    const cards = await Card.find({});
+    
+    if (cards.length === 0) {
+      return res.json({ 
+        message: 'No cards to update',
+        updated: 0
+      });
+    }
+
+    // Load cached card info for all cards
+    const cardInfos = await CardInfo.find({ id: { $in: cards.map((card) => card.id) } })
+      .select('id card_sets');
+    const cardInfoMap = new Map(cardInfos.map((info) => [info.id, info]));
+
+    let updatedCount = 0;
+    const now = new Date();
+
+    await Promise.all(
+      cards.map(async (card) => {
+        let updatedPrice = null;
+        const cardInfo = cardInfoMap.get(card.id);
+
+        // Try to get price from cached card info
+        if (cardInfo?.card_sets?.length) {
+          const matchingSet = cardInfo.card_sets.find((set) => 
+            set.set_code === card.set_code && set.set_rarity === card.set_rarity
+          );
+          const price = matchingSet?.set_price ? parseFloat(matchingSet.set_price) : null;
+          if (price !== null && !Number.isNaN(price)) {
+            updatedPrice = price;
+          }
+        }
+
+        // Fallback to direct API call if cache lookup failed
+        if (updatedPrice === null) {
+          updatedPrice = await updateCardPrice(card.set_code, card.set_rarity);
+        }
+
+        if (updatedPrice !== null) {
+          card.tcgplayer_price = updatedPrice;
+          card.last_updated = now;
+          await card.save();
+          updatedCount++;
+        }
+      })
+    );
+
+    res.json({ 
+      message: `Successfully refreshed prices for ${updatedCount} card(s)`,
+      updated: updatedCount,
+      total: cards.length
+    });
+  } catch (error) {
+    console.error('Error refreshing card prices:', error);
+    res.status(500).json({ error: 'Failed to refresh card prices' });
   }
 });
 

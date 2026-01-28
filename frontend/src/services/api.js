@@ -74,6 +74,11 @@ export const cardService = {
   getExchangeRate: async () => {
     const response = await api.get('/cards/exchange-rate/usd-aud');
     return response.data;
+  },
+
+  refreshAllPrices: async () => {
+    const response = await api.post('/cards/refresh-prices');
+    return response.data;
   }
 };
 

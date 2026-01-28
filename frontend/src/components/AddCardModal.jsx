@@ -1,17 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { cardService } from '../services/api';
 import './AddCardModal.css';
 
-const AddCardModal = ({ onClose, onCardAdded }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const AddCardModal = ({ onClose, onCardAdded, initialSearchTerm = '' }) => {
+  const [searchQuery, setSearchQuery] = useState(initialSearchTerm);
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleSearch = async (e) => {
-    e.preventDefault();
-    
-    if (!searchQuery.trim()) {
+  // Auto-search if initialSearchTerm is provided
+  useEffect(() => {
+    if (initialSearchTerm.trim()) {
+      performSearch(initialSearchTerm);
+    }
+  }, []);
+
+  const performSearch = async (query) => {
+    if (!query.trim()) {
       setError('Please enter a card name');
       return;
     }
@@ -19,7 +24,7 @@ const AddCardModal = ({ onClose, onCardAdded }) => {
     try {
       setLoading(true);
       setError(null);
-      const results = await cardService.searchYGOPro(searchQuery);
+      const results = await cardService.searchYGOPro(query);
       setSearchResults(results);
       
       if (results.length === 0) {
@@ -31,6 +36,11 @@ const AddCardModal = ({ onClose, onCardAdded }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    performSearch(searchQuery);
   };
 
   const getSetPrice = (set) => {
