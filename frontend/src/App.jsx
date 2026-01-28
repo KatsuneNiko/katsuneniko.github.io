@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
 import Binder from './pages/Binder';
@@ -10,15 +10,17 @@ import ProtectedRoute from './components/ProtectedRoute';
 function AppContent() {
   const [isListOpen, setIsListOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   // Handle redirect from 404.html
   useEffect(() => {
     const redirectPath = sessionStorage.getItem('redirectPath');
     if (redirectPath) {
       sessionStorage.removeItem('redirectPath');
-      window.history.replaceState(null, '', redirectPath);
+      // Navigate to the stored path
+      navigate(redirectPath, { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   const toggleList = () => {
     setIsListOpen(!isListOpen);
