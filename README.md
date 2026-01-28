@@ -38,6 +38,7 @@ MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/yugioh-binder
 JWT_SECRET=your-secret-key
 PORT=5000
 FRONTEND_URL=http://localhost:3000
+FIXER_API_KEY=your-fixer-api-key
 ```
 
 Create `frontend/.env`:
@@ -69,6 +70,11 @@ Create a MongoDB database named `yugioh-binder` with a `login` collection. Add a
   "password": "$2a$10$..." // Use bcrypt to hash your password
 }
 ```
+
+**Fixer.io API key setup:**
+- Create a free account at https://fixer.io and generate an API key.
+- Add the key to `backend/.env` as `FIXER_API_KEY`.
+- Restart the backend after updating `.env`.
 
 ## 📦 Project Structure
 
@@ -110,11 +116,19 @@ Create a MongoDB database named `yugioh-binder` with a `login` collection. Add a
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| GET | `/api/health` | Health check |
 | POST | `/api/auth/login` | Authenticate user |
-| GET | `/api/cards` | Get all cards (searchable) |
+| GET | `/api/cards` | Get all cards (optional `search` query) |
 | POST | `/api/cards` | Add new card (protected) |
-| DELETE | `/api/cards/:id` | Remove card (protected) |
-| PATCH | `/api/cards/:id` | Update card (protected) |
+| PATCH | `/api/cards/:id` | Update card quantity (protected) |
+| POST | `/api/cards/:id/increment` | Increment card quantity (protected) |
+| POST | `/api/cards/:id/decrement` | Decrement card quantity (protected) |
+| DELETE | `/api/cards/:id` | Delete card (protected) |
+| GET | `/api/cards/search/ygopro` | Search cached YGOProDeck data (requires `name` query) |
+| GET | `/api/cards/exchange-rate/usd-aud` | Get USD→AUD exchange rate |
+| GET | `/api/github/profile` | Get cached GitHub profile |
+| GET | `/api/github/changes` | Check if GitHub profile changed |
+| POST | `/api/github/refresh` | Force refresh GitHub profile |
 
 ## 🛠️ Tech Stack
 
@@ -122,7 +136,7 @@ Create a MongoDB database named `yugioh-binder` with a `login` collection. Add a
 - **Backend**: Node.js, Express.js
 - **Database**: MongoDB Atlas
 - **Authentication**: JWT + bcrypt
-- **APIs**: YGOProDeck, GitHub API, TCGPlayer
+- **APIs**: YGOProDeck, GitHub API, TCGPlayer, Fixer.io
 
 ## 📝 License
 
