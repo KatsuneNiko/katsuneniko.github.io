@@ -9,8 +9,10 @@ let cachedProfile = null;
 let lastCacheTime = null;
 let lastProfileHash = null;
 let hasChanges = false;
+let backgroundRefreshTimer = null;
 
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
+const BACKGROUND_REFRESH_INTERVAL = 1000 * 60 * 50; // Refresh every 50 minutes (before cache expires)
 
 // Check if cache is still valid
 const isCacheValid = () => {
@@ -71,6 +73,32 @@ export const getChangeStatus = () => {
 export const invalidateCache = () => {
   lastCacheTime = null;
   console.log('🔄 Cache invalidated, will force fetch on next request');
+};
+
+// Schedule background refresh to keep cache warm
+const scheduleBackgroundRefresh = () => {
+  // Clear any existing timer
+  if (backgroundRefreshTimer) {
+    clearTimeout(backgroundRefreshTimer);
+  }
+  
+  // Schedule next refresh before cache expires
+  backgroundRefreshTimer = setTimeout(async () => {
+    console.log('🔄 Background refresh: updating GitHub profile cache...');
+    try {
+      // Temporarily invalidate to force fresh fetch
+      const oldCacheTime = lastCacheTime;
+      lastCacheTime = null;
+      await getGitHubProfile();
+      console.log('✅ Background refresh: cache updated successfully');
+    } catch (error) {
+      console.error('⚠️  Background refresh failed:', error.message);
+      // Restore old cache time on failure
+      lastCacheTime = oldCacheTime;
+    }
+    // Schedule next refresh
+    scheduleBackgroundRefresh();
+  }, BACKGROUND_REFRESH_INTERVAL);
 };
 
 // Fetch GitHub profile data
@@ -189,6 +217,9 @@ export const getGitHubProfile = async () => {
 
     lastCacheTime = Date.now();
     console.log('✅ GitHub profile cached successfully');
+    
+    // Schedule background refresh to keep cache warm
+    scheduleBackgroundRefresh();
 
     return {
       ...cachedProfile,

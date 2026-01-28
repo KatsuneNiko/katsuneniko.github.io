@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { githubService } from '../services/api';
+import SkeletonLoader from '../components/SkeletonLoader';
 import './Home.css';
 
 const Home = () => {
@@ -64,7 +65,7 @@ const Home = () => {
   if (loading) {
     return (
       <div className="home-container">
-        <div className="loading">Loading profile...</div>
+        <SkeletonLoader />
       </div>
     );
   }

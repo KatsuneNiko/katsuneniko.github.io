@@ -11,6 +11,7 @@ import githubRoutes from './routes/github.js';
 
 // Import services
 import { initializeYGOProDeckCache, updatePricesDaily } from './services/ygoproService.js';
+import { getGitHubProfile } from './services/githubService.js';
 
 dotenv.config();
 
@@ -28,10 +29,18 @@ app.use(cors({
 mongoose.connect(process.env.MONGODB_URI, {
   dbName: 'yugioh-binder'
 })
-.then(() => {
+.then(async () => {
   console.log('✅ Connected to MongoDB');
   // Initialize YGOProDeck cache on startup
   initializeYGOProDeckCache();
+  // Pre-warm GitHub profile cache on startup
+  console.log('🔥 Pre-warming GitHub profile cache...');
+  try {
+    await getGitHubProfile();
+    console.log('✅ GitHub profile cache ready');
+  } catch (error) {
+    console.error('⚠️  Failed to pre-warm GitHub cache:', error.message);
+  }
 })
 .catch((error) => {
   console.error('❌ MongoDB connection error:', error);
