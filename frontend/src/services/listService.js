@@ -1,5 +1,5 @@
 // Service to manage the card list using sessionStorage
-// The list is shared between Binder and BinderEdit pages
+// The list is shared between YGOBinder and YGOBinderEdit pages
 
 const LIST_STORAGE_KEY = 'yugioh_card_list';
 

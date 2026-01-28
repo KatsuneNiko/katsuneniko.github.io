@@ -3,9 +3,9 @@ import { cardService } from '../services/api';
 import { listService } from '../services/listService';
 import AddCardModal from '../components/AddCardModal';
 import ListPanel from '../components/ListPanel';
-import './BinderEdit.css';
+import './YGOBinderEdit.css';
 
-const BinderEdit = ({ isListOpen, toggleList }) => {
+const YGOBinderEdit = ({ isListOpen, toggleList }) => {
   const [cards, setCards] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -382,4 +382,4 @@ const BinderEdit = ({ isListOpen, toggleList }) => {
   );
 };
 
-export default BinderEdit;
+export default YGOBinderEdit;

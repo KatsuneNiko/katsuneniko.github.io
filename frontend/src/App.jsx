@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
-import Binder from './pages/Binder';
+import YGOBinder from './pages/YGOBinder';
 import Login from './pages/Login';
-import BinderEdit from './pages/BinderEdit';
+import YGOBinderEdit from './pages/YGOBinderEdit';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
@@ -33,13 +33,13 @@ function AppContent() {
     <Layout showListToggle={showListToggle} isListOpen={isListOpen} toggleList={toggleList}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/ygo-binder" element={<Binder isListOpen={isListOpen} toggleList={toggleList} />} />
+        <Route path="/ygo-binder" element={<YGOBinder isListOpen={isListOpen} toggleList={toggleList} />} />
         <Route path="/login" element={<Login />} />
         <Route 
           path="/ygo-binder/edit" 
           element={
             <ProtectedRoute>
-              <BinderEdit isListOpen={isListOpen} toggleList={toggleList} />
+              <YGOBinderEdit isListOpen={isListOpen} toggleList={toggleList} />
             </ProtectedRoute>
           } 
         />

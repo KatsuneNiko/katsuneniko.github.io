@@ -35,7 +35,7 @@ src/
 │   ├── Layout/         # Header, Footer, BurgerMenu
 │   ├── AddCardModal.jsx
 │   └── ProtectedRoute.jsx
-├── pages/              # Home, Binder, BinderEdit, Login
+├── pages/              # Home, YGOBinder, YGOBinderEdit, Login
 ├── services/
 │   └── api.js          # API client & services
 └── styles/             # CSS files
@@ -52,9 +52,9 @@ src/
 | Route | Component | Protected |
 |-------|-----------|-----------|
 | `/` | Home | No |
-| `/binder` | Binder | No |
+| `/ygo-binder` | YGOBinder | No |
 | `/login` | Login | No |
-| `/binder/edit` | BinderEdit | Yes |
+| `/ygo-binder/edit` | YGOBinderEdit | Yes |
 
 ## Features
 
@@ -63,12 +63,12 @@ src/
 - Recent repositories
 - Activity feed
 
-### Binder Page
+### YGO Binder Page
 - View card collection
 - Search by name
 - Price information
 
-### Binder Edit Page (Protected)
+### YGO Binder Edit Page (Protected)
 - Add new cards
 - Increment/decrement quantities
 - Delete cards

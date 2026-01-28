@@ -2,9 +2,9 @@ import { useState, useEffect } from 'react';
 import { cardService } from '../services/api';
 import { listService } from '../services/listService';
 import ListPanel from '../components/ListPanel';
-import './Binder.css';
+import './YGOBinder.css';
 
-const Binder = ({ isListOpen, toggleList }) => {
+const YGOBinder = ({ isListOpen, toggleList }) => {
   const [cards, setCards] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
@@ -217,4 +217,4 @@ const Binder = ({ isListOpen, toggleList }) => {
   );
 };
 
-export default Binder;
+export default YGOBinder;
