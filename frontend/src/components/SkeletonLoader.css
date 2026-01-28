@@ -36,7 +36,6 @@
   gap: 2rem;
   margin-bottom: 2rem;
   flex-wrap: wrap;
-  position: relative;
 }
 
 .skeleton-avatar {
@@ -52,27 +51,31 @@
 .skeleton-profile-info {
   flex: 1;
   min-width: 200px;
-  text-align: left;
+  text-align: center;
 }
 
 .skeleton-name {
   width: 250px;
-  height: 32px;
+  height: 36px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
   margin-bottom: 0.75rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skeleton-meta-line {
   width: 150px;
-  height: 20px;
+  height: 18px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
   margin-bottom: 0.75rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skeleton-bio {
@@ -82,25 +85,28 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skeleton-refresh-button {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 100px;
-  height: 36px;
+  width: 120px;
+  height: 44px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 6px;
+  flex-shrink: 0;
 }
 
 .skeleton-stats {
   display: flex;
   gap: 2rem;
-  margin: 2rem 0;
+  margin: 2rem 0 0.5rem 0;
   justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--background);
+  border-radius: 8px;
 }
 
 .skeleton-stat {
@@ -110,7 +116,7 @@
 
 .skeleton-stat-number {
   width: 80px;
-  height: 28px;
+  height: 32px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -139,7 +145,7 @@
 
 .skeleton-link {
   width: 200px;
-  height: 20px;
+  height: 44px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -174,13 +180,13 @@
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   border-radius: 8px;
 }
 
 .skeleton-repo-name {
   width: 70%;
-  height: 20px;
+  height: 22px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -189,7 +195,7 @@
 
 .skeleton-repo-desc-short {
   width: 100%;
-  height: 16px;
+  height: 18px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -235,7 +241,7 @@
 
 .skeleton-activity-item {
   width: 100%;
-  height: 40px;
+  height: 56px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -245,10 +251,6 @@
 @media (max-width: 768px) {
   .skeleton-profile-header {
     flex-direction: column;
-  }
-
-  .skeleton-refresh-button {
-    position: static;
   }
 
   .skeleton-stats {
