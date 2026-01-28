@@ -14,9 +14,9 @@ const Layout = ({ children, showListToggle, isListOpen, toggleList }) => {
     switch (path) {
       case '/':
         return 'Home Page';
-      case '/binder':
+      case '/ygo-binder':
         return 'Yu-Gi-Oh Binder';
-      case '/binder/edit':
+      case '/ygo-binder/edit':
         return 'Edit Yu-Gi-Oh Binder';
       case '/login':
         return 'Login';
