@@ -98,7 +98,7 @@ export const getGitHubProfile = async () => {
           bio
           avatarUrl
           url
-          repositories(first: 6, orderBy: {field: UPDATED_AT, direction: DESC}) {
+          repositories(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
             nodes {
               name
               description
