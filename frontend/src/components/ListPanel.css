@@ -188,14 +188,15 @@
 
 .list-item-controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 0.5rem;
   align-items: center;
+  justify-content: flex-end;
 }
 
 .quantity-controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
   gap: 0.25rem;
 }
