@@ -181,7 +181,7 @@ const Binder = ({ isListOpen, toggleList }) => {
                       <div className="timestamp">{formatDate(card.last_updated)}</div>
                     )}
                   </div>
-                  <div className="col quantity-col" role="cell" data-label="Quantity">×{card.quantity}</div>
+                  <div className="col quantity-col" role="cell" data-label="Quantity">{card.quantity}</div>
                   <div className="col actions-col" role="cell" data-label="Actions">
                     <div className="list-actions">
                       <button 
