@@ -71,6 +71,27 @@
   margin-bottom: 0.5rem;
 }
 
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.profile-username {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  margin: 0;
+  font-weight: 500;
+}
+
+.profile-pronouns {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin: 0;
+  font-style: italic;
+}
+
 .profile-bio {
   color: var(--text-secondary);
   font-size: 1.1rem;

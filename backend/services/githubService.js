@@ -22,6 +22,8 @@ const isCacheValid = () => {
 const generateProfileHash = (profile) => {
   const dataToHash = JSON.stringify({
     name: profile.name,
+    login: profile.login,
+    pronouns: profile.pronouns,
     bio: profile.bio,
     public_repos: profile.public_repos,
     followers: profile.followers,
@@ -101,6 +103,8 @@ export const getGitHubProfile = async () => {
     // Process data
     cachedProfile = {
       name: profile.name || profile.login,
+      login: profile.login,
+      pronouns: profile.pronouns,
       bio: profile.bio,
       avatar_url: profile.avatar_url,
       html_url: profile.html_url,
