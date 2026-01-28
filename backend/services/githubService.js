@@ -91,6 +91,13 @@ export const getGitHubProfile = async () => {
     // Fetch user profile
     const profileResponse = await axios.get(`${GITHUB_API}/users/${USERNAME}`, { headers });
     const profile = profileResponse.data;
+    
+    console.log('GitHub profile data:', {
+      name: profile.name,
+      login: profile.login,
+      pronouns: profile.pronouns,
+      bio: profile.bio
+    });
 
     // Fetch repositories
     const reposResponse = await axios.get(`${GITHUB_API}/users/${USERNAME}/repos?sort=updated&per_page=6`, { headers });
