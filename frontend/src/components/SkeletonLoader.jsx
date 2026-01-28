@@ -31,9 +31,6 @@ const SkeletonLoader = () => {
           </div>
         </div>
 
-        {/* Location */}
-        <div className="skeleton-location" />
-
         {/* View Profile Link */}
         <div className="skeleton-link" />
       </div>
