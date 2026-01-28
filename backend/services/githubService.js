@@ -10,6 +10,7 @@ let lastCacheTime = null;
 let lastProfileHash = null;
 let hasChanges = false;
 let backgroundRefreshTimer = null;
+let inFlightRequest = null;
 
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 const BACKGROUND_REFRESH_INTERVAL = 1000 * 60 * 50; // Refresh every 50 minutes (before cache expires)
@@ -105,30 +106,36 @@ const scheduleBackgroundRefresh = () => {
 export const getGitHubProfile = async () => {
   try {
     if (isCacheValid() && cachedProfile) {
-      console.log('✅ Returning cached GitHub profile');
       return cachedProfile;
+    }
+
+    // If a request is already in flight, wait for it instead of making another
+    if (inFlightRequest) {
+      return inFlightRequest;
     }
 
     console.log('🔄 Fetching GitHub profile...');
 
-    const headers = {};
-    if (process.env.GITHUB_TOKEN) {
-      headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
-    }
+    // Create in-flight request promise
+    inFlightRequest = (async () => {
+      const headers = {};
+      if (process.env.GITHUB_TOKEN) {
+        headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
+      }
 
-    // Fetch user profile using GraphQL (includes pronouns)
-    const graphqlQuery = `
-      query {
-        user(login: "${USERNAME}") {
-          name
-          login
-          pronouns
-          bio
-          avatarUrl
-          url
-          repositories(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
-            totalCount
-            nodes {
+      // Fetch user profile using GraphQL (includes pronouns)
+      const graphqlQuery = `
+        query {
+          user(login: "${USERNAME}") {
+            name
+            login
+            pronouns
+            bio
+            avatarUrl
+            url
+            repositories(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+              totalCount
+              nodes {
               name
               description
               url
@@ -225,7 +232,14 @@ export const getGitHubProfile = async () => {
       ...cachedProfile,
       hasChanged: changed
     };
+    })();
+
+    // Wait for the in-flight request and clear it when done
+    const result = await inFlightRequest;
+    inFlightRequest = null;
+    return result;
   } catch (error) {
+    inFlightRequest = null; // Clear in-flight request on error
     console.error('❌ Error fetching GitHub profile:', error.message);
     
     // Return cached data if available, even if expired

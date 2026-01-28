@@ -1,4 +1,4 @@
-.profile-skeleton {
+.skeleton-container {
   animation: pulse 1.5s ease-in-out infinite;
 }
 
@@ -11,11 +11,32 @@
   }
 }
 
-.skeleton-header {
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton-profile-section {
+  background-color: var(--surface);
+  border-radius: 12px;
+  padding: 2.5rem;
+  text-align: center;
+  box-shadow: 0 4px 12px var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.skeleton-profile-header {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 2rem;
   margin-bottom: 2rem;
+  flex-wrap: wrap;
+  position: relative;
 }
 
 .skeleton-avatar {
@@ -25,63 +46,114 @@
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
+  flex-shrink: 0;
 }
 
-.skeleton-info {
+.skeleton-profile-info {
   flex: 1;
+  min-width: 200px;
+  text-align: left;
 }
 
 .skeleton-name {
-  width: 200px;
+  width: 250px;
   height: 32px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
-.skeleton-pronouns {
-  width: 100px;
+.skeleton-meta-line {
+  width: 150px;
   height: 20px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .skeleton-bio {
   width: 100%;
-  height: 60px;
+  height: 50px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  margin-bottom: 1rem;
+}
+
+.skeleton-refresh-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 36px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
 }
 
 .skeleton-stats {
   display: flex;
   gap: 2rem;
-  margin-top: 1rem;
+  margin: 2rem 0;
+  justify-content: center;
 }
 
 .skeleton-stat {
+  flex: 0 0 auto;
+  text-align: center;
+}
+
+.skeleton-stat-number {
   width: 80px;
-  height: 60px;
+  height: 28px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.skeleton-stat-label {
+  width: 100px;
+  height: 16px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
-.skeleton-repos {
+.skeleton-location {
+  width: 150px;
+  height: 20px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin: 1.5rem auto;
+}
+
+.skeleton-link {
+  width: 200px;
+  height: 20px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin: 1.5rem auto;
+}
+
+/* Repos Section */
+.skeleton-repos-section {
   margin-top: 3rem;
 }
 
 .skeleton-section-title {
-  width: 150px;
+  width: 200px;
   height: 28px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
@@ -92,33 +164,35 @@
 
 .skeleton-repo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .skeleton-repo-card {
-  height: 150px;
-  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
-  border-radius: 8px;
+  height: auto;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  border-radius: 8px;
 }
 
 .skeleton-repo-name {
   width: 70%;
-  height: 24px;
-  background: rgba(255, 255, 255, 0.5);
+  height: 20px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
-.skeleton-repo-desc {
+.skeleton-repo-desc-short {
   width: 100%;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.5);
+  height: 16px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
@@ -126,34 +200,62 @@
   margin-top: auto;
   display: flex;
   gap: 1rem;
+  padding-top: 0.5rem;
 }
 
 .skeleton-repo-stat {
-  width: 60px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.5);
+  width: 70px;
+  height: 16px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
   border-radius: 4px;
 }
 
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
+.skeleton-view-all-link {
+  width: 200px;
+  height: 20px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+/* Activity Section */
+.skeleton-activity-section {
+  margin-top: 3rem;
+}
+
+.skeleton-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.skeleton-activity-item {
+  width: 100%;
+  height: 40px;
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
 }
 
 @media (max-width: 768px) {
-  .skeleton-header {
+  .skeleton-profile-header {
     flex-direction: column;
-    text-align: center;
   }
-  
+
+  .skeleton-refresh-button {
+    position: static;
+  }
+
   .skeleton-stats {
-    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
-  
+
   .skeleton-repo-grid {
     grid-template-columns: 1fr;
   }

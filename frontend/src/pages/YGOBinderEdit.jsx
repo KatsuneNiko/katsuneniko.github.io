@@ -13,9 +13,13 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [imageCache, setImageCache] = useState({});
   const [cardsInList, setCardsInList] = useState({});
+  const [sortColumn, setSortColumn] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [exchangeRate, setExchangeRate] = useState(null);
 
   useEffect(() => {
     fetchCards();
+    fetchExchangeRate();
 
     // Subscribe to list changes
     const unsubscribe = listService.subscribe(() => {
@@ -73,6 +77,69 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
     setCardsInList(inList);
   };
 
+  const fetchExchangeRate = async () => {
+    try {
+      const data = await cardService.getExchangeRate();
+      setExchangeRate(data.rate);
+    } catch (err) {
+      console.error('Failed to fetch exchange rate:', err);
+      setExchangeRate(1.5); // Fallback rate
+    }
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      // Toggle direction if same column
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      // New column, default to ascending
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortedCards = () => {
+    const sorted = [...cards].sort((a, b) => {
+      let aVal, bVal;
+
+      switch (sortColumn) {
+        case 'name':
+          aVal = a.name.toLowerCase();
+          bVal = b.name.toLowerCase();
+          break;
+        case 'set_code':
+          aVal = a.set_code.toLowerCase();
+          bVal = b.set_code.toLowerCase();
+          break;
+        case 'set_rarity':
+          aVal = a.set_rarity.toLowerCase();
+          bVal = b.set_rarity.toLowerCase();
+          break;
+        case 'tcgplayer_price':
+          aVal = a.tcgplayer_price || 0;
+          bVal = b.tcgplayer_price || 0;
+          break;
+        case 'quantity':
+          aVal = a.quantity;
+          bVal = b.quantity;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getSortArrow = (column) => {
+    if (sortColumn !== column) return ' ↕';
+    return sortDirection === 'asc' ? ' ↓' : ' ↑';
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
     fetchCards(searchTerm);
@@ -81,7 +148,14 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
   const handleIncrement = async (cardId) => {
     try {
       await cardService.incrementCard(cardId);
-      fetchCards(searchTerm);
+      // Update local state instead of refetching all cards
+      setCards(prevCards => 
+        prevCards.map(card => 
+          card._id === cardId 
+            ? { ...card, quantity: card.quantity + 1 }
+            : card
+        )
+      );
     } catch (err) {
       alert('Failed to increment card quantity');
       console.error(err);
@@ -90,8 +164,21 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
 
   const handleDecrement = async (cardId) => {
     try {
-      await cardService.decrementCard(cardId);
-      fetchCards(searchTerm);
+      const result = await cardService.decrementCard(cardId);
+      // Update local state - if card was deleted (quantity reached 0), remove it
+      setCards(prevCards => {
+        const card = prevCards.find(c => c._id === cardId);
+        if (card && card.quantity <= 1) {
+          // Card will be deleted, remove from list
+          return prevCards.filter(c => c._id !== cardId);
+        }
+        // Just decrement quantity
+        return prevCards.map(c => 
+          c._id === cardId 
+            ? { ...c, quantity: c.quantity - 1 }
+            : c
+        );
+      });
     } catch (err) {
       alert('Failed to decrement card quantity');
       console.error(err);
@@ -105,7 +192,8 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
 
     try {
       await cardService.deleteCard(cardId);
-      fetchCards(searchTerm);
+      // Remove card from local state
+      setCards(prevCards => prevCards.filter(card => card._id !== cardId));
     } catch (err) {
       alert('Failed to delete card');
       console.error(err);
@@ -210,7 +298,9 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)} ea`;
+    if (!exchangeRate) return `$${price.toFixed(2)} USD/ea`;
+    const priceAUD = price * exchangeRate;
+    return `$${priceAUD.toFixed(2)} AUD/ea`;
   };
 
   const formatDate = (date) => {
@@ -221,6 +311,19 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
     if (hours < 24) return `${hours}h ago`;
     const days = Math.floor(hours / 24);
     return `${days}d ago`;
+  };
+
+  const getTotalValue = () => {
+    return cards.reduce((total, card) => {
+      const price = card.tcgplayer_price || 0;
+      return total + (price * card.quantity);
+    }, 0);
+  };
+
+  const formatTotalValue = (usdTotal) => {
+    if (!exchangeRate) return `$${usdTotal.toFixed(2)} USD`;
+    const audTotal = usdTotal * exchangeRate;
+    return `$${audTotal.toFixed(2)} AUD ($${usdTotal.toFixed(2)} USD)`;
   };
 
   const getCardImage = (card) => {
@@ -274,15 +377,25 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
           <div className="cards-table" role="table">
             <div className="cards-row cards-header with-actions" role="row">
               <div className="col image-col" role="columnheader">Card</div>
-              <div className="col name-col" role="columnheader">Name</div>
-              <div className="col set-col" role="columnheader">Set Code</div>
-              <div className="col rarity-col" role="columnheader">Rarity</div>
-              <div className="col price-col" role="columnheader">Price</div>
-              <div className="col quantity-col" role="columnheader">Qty</div>
+              <div className="col name-col sortable" role="columnheader" onClick={() => handleSort('name')} style={{cursor: 'pointer'}}>
+                Name{getSortArrow('name')}
+              </div>
+              <div className="col set-col sortable" role="columnheader" onClick={() => handleSort('set_code')} style={{cursor: 'pointer'}}>
+                Set Code{getSortArrow('set_code')}
+              </div>
+              <div className="col rarity-col sortable" role="columnheader" onClick={() => handleSort('set_rarity')} style={{cursor: 'pointer'}}>
+                Rarity{getSortArrow('set_rarity')}
+              </div>
+              <div className="col price-col sortable" role="columnheader" onClick={() => handleSort('tcgplayer_price')} style={{cursor: 'pointer'}}>
+                Price{getSortArrow('tcgplayer_price')}
+              </div>
+              <div className="col quantity-col sortable" role="columnheader" onClick={() => handleSort('quantity')} style={{cursor: 'pointer'}}>
+                Qty{getSortArrow('quantity')}
+              </div>
               <div className="col actions-col" role="columnheader">Actions</div>
             </div>
 
-            {cards.map((card) => {
+            {getSortedCards().map((card) => {
               const imageSrc = getCardImage(card);
               const inList = isCardInList(card);
 
@@ -321,7 +434,7 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
                       >
                         ▲
                       </button>
-                      <span className="qty-display">×{card.quantity}</span>
+                      <span className="qty-display">{card.quantity}</span>
                       <button 
                         className="qty-arrow"
                         onClick={() => handleDecrement(card._id)}
@@ -338,7 +451,7 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
                         onClick={() => handleAddToList(card)}
                         title="Add to list"
                       >
-                        ➕ Add to List
+                        Add to List
                       </button>
                       <button 
                         className="action-button remove-from-list"
@@ -346,14 +459,14 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
                         disabled={!inList}
                         title="Remove from list"
                       >
-                        ➖ Remove from List
+                        Remove from List
                       </button>
                       <button 
                         className="action-button delete"
                         onClick={() => handleDelete(card._id)}
                         title="Delete card"
                       >
-                        🗑️ Delete
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -362,6 +475,13 @@ const YGOBinderEdit = ({ isListOpen, toggleList }) => {
             })}
           </div>
         </>
+      )}
+
+      {!loading && !error && cards.length > 0 && (
+        <div className="total-value-panel">
+          <div className="total-value-label">Total Binder Value:</div>
+          <div className="total-value-amount">{formatTotalValue(getTotalValue())}</div>
+        </div>
       )}
 
       {isModalOpen && (

@@ -11,9 +11,11 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
   const [error, setError] = useState(null);
   const [imageCache, setImageCache] = useState({});
   const [cardsInList, setCardsInList] = useState({});
+  const [exchangeRate, setExchangeRate] = useState(null);
 
   useEffect(() => {
     fetchCards();
+    fetchExchangeRate();
 
     // Subscribe to list changes
     const unsubscribe = listService.subscribe(() => {
@@ -71,6 +73,16 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
     setCardsInList(inList);
   };
 
+  const fetchExchangeRate = async () => {
+    try {
+      const data = await cardService.getExchangeRate();
+      setExchangeRate(data.rate);
+    } catch (err) {
+      console.error('Failed to fetch exchange rate:', err);
+      setExchangeRate(1.5); // Fallback rate
+    }
+  };
+
   const handleAddToList = (card) => {
     listService.addToList(card, 1);
   };
@@ -91,7 +103,9 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)} ea`;
+    if (!exchangeRate) return `$${price.toFixed(2)} USD/ea`;
+    const priceAUD = price * exchangeRate;
+    return `$${priceAUD.toFixed(2)} AUD/ea`;
   };
 
   const formatDate = (date) => {
@@ -189,7 +203,7 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
                         onClick={() => handleAddToList(card)}
                         title="Add to list"
                       >
-                        ➕ Add to List
+                        Add to List
                       </button>
                       <button 
                         className="action-button remove-from-list"
@@ -197,7 +211,7 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
                         disabled={!inList}
                         title="Remove from list"
                       >
-                        ➖ Remove from List
+                        Remove from List
                       </button>
                     </div>
                   </div>

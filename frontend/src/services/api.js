@@ -69,6 +69,11 @@ export const cardService = {
   searchYGOPro: async (name) => {
     const response = await api.get(`/cards/search/ygopro?name=${name}`);
     return response.data;
+  },
+  
+  getExchangeRate: async () => {
+    const response = await api.get('/cards/exchange-rate/usd-aud');
+    return response.data;
   }
 };
 

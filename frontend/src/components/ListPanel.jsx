@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { listService } from '../services/listService';
+import { cardService } from '../services/api';
 import './ListPanel.css';
 
 const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, onRemoveFromBinder }) => {
@@ -9,10 +10,14 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
   const [importText, setImportText] = useState('');
   const [importResults, setImportResults] = useState(null);
   const [availableCards, setAvailableCards] = useState([]);
+  const [exchangeRate, setExchangeRate] = useState(null);
 
   useEffect(() => {
     // Load initial list
     setList(listService.getList());
+    
+    // Fetch exchange rate
+    fetchExchangeRate();
 
     // Subscribe to list changes
     const unsubscribe = listService.subscribe((updatedList) => {
@@ -21,6 +26,16 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
 
     return unsubscribe;
   }, []);
+
+  const fetchExchangeRate = async () => {
+    try {
+      const data = await cardService.getExchangeRate();
+      setExchangeRate(data.rate);
+    } catch (err) {
+      console.error('Failed to fetch exchange rate:', err);
+      setExchangeRate(1.5); // Fallback rate
+    }
+  };
 
   const handleQuantityChange = (card, delta) => {
     const newQuantity = card.quantity + delta;
@@ -91,12 +106,16 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)} ea`;
+    if (!exchangeRate) return `$${price.toFixed(2)} USD ea`;
+    const priceAUD = price * exchangeRate;
+    return `$${priceAUD.toFixed(2)} AUD ea`;
   };
 
   const formatTotalPrice = (price) => {
     if (!price || price === 0) return 'N/A';
-    return `$${price.toFixed(2)}`;
+    if (!exchangeRate) return `$${price.toFixed(2)} USD`;
+    const priceAUD = price * exchangeRate;
+    return `$${priceAUD.toFixed(2)} AUD ($${price.toFixed(2)} USD)`;
   };
 
   return (

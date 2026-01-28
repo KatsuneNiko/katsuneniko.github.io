@@ -3,6 +3,7 @@ import Card from '../models/Card.js';
 import CardInfo from '../models/CardInfo.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { updateCardPrice } from '../services/ygoproService.js';
+import { getUSDtoAUDRate } from '../services/currencyService.js';
 
 const router = express.Router();
 
@@ -267,4 +268,20 @@ router.get('/search/ygopro', async (req, res) => {
   }
 });
 
+// Get current USD to AUD exchange rate
+router.get('/exchange-rate/usd-aud', async (req, res) => {
+  try {
+    const rate = await getUSDtoAUDRate();
+    res.json({ 
+      from: 'USD',
+      to: 'AUD',
+      rate: rate
+    });
+  } catch (error) {
+    console.error('Error fetching exchange rate:', error);
+    res.status(500).json({ error: 'Failed to fetch exchange rate' });
+  }
+});
+
 export default router;
+
