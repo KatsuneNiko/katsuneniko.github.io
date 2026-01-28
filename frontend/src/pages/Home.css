@@ -73,10 +73,11 @@
 
 .profile-meta {
   display: flex;
-  flex-direction: column;
-  gap: 0;
+  flex-direction: row;
+  gap: 0.5rem;
   margin-bottom: 0.75rem;
   opacity: 0.75;
+  align-items: center;
 }
 
 .profile-username {
