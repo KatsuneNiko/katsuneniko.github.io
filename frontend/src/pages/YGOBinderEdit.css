@@ -1,29 +1,21 @@
+/* YGOBinderEdit page-specific styles */
+
 .binder-edit-container {
   animation: fadeIn 0.5s ease;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
+/* Page-specific search section layout */
 .search-section {
-  background-color: var(--surface);
-  padding: 1.5rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px var(--shadow);
   display: flex;
   gap: 1rem;
   align-items: center;
 }
 
 .search-form {
-  display: flex;
-  gap: 1rem;
   flex: 1;
 }
 
+/* Add Card Button */
 .add-card-button {
   padding: 0.875rem 1.75rem;
   background-color: var(--success);
@@ -44,112 +36,14 @@
   box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
 }
 
-.cards-table {
-  background-color: var(--surface);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px var(--shadow);
-  overflow: hidden;
-  border: 2px solid var(--border);
-  width: 100%;
-}
-
+/* Page-specific grid layout for edit mode */
 .cards-row {
-  display: grid;
   grid-template-columns: 120px 1.3fr 0.9fr 1fr 0.9fr 0.7fr 1.4fr;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  justify-items: center;
 }
 
-.cards-row:last-of-type {
-  border-bottom: none;
-}
-
+/* Page-specific header gradient */
 .cards-header {
   background: linear-gradient(90deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0));
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 700;
-}
-
-.cards-header .col {
-  display: flex;
-  align-items: center;
-  justify-self: center;
-  text-align: center;
-}
-
-/* Force header cells to center despite per-column alignment rules */
-.cards-header .image-col,
-.cards-header .name-col,
-.cards-header .set-col,
-.cards-header .rarity-col,
-.cards-header .price-col,
-.cards-header .quantity-col,
-.cards-header .actions-col {
-  justify-self: center;
-}
-
-.col {
-  color: var(--text-primary);
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  align-items: center;
-  text-align: center;
-}
-
-.image-col {
-  align-items: center;
-}
-
-.card-thumb {
-  width: 96px;
-  height: 140px;
-  object-fit: contain;
-  border-radius: 10px;
-  background-color: var(--background);
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-}
-
-.card-thumb.placeholder {
-  display: grid;
-  place-items: center;
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-.card-name {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.card-meta {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.price-col {
-  gap: 0.35rem;
-}
-
-.price-value {
-  color: var(--success);
-  font-weight: 700;
-  font-size: 1rem;
-}
-
-.timestamp {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  font-weight: 500;
 }
 
 /* Quantity Controls with Arrows */
@@ -191,6 +85,7 @@
   color: var(--text-primary);
 }
 
+/* Card Actions */
 .card-actions {
   display: flex;
   flex-direction: column;
@@ -198,41 +93,7 @@
   width: 100%;
 }
 
-.action-button {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.action-button.add-to-list {
-  background: #007bff;
-  color: white;
-}
-
-.action-button.add-to-list:hover {
-  background: #0056b3;
-}
-
-.action-button.remove-from-list {
-  background: #6c757d;
-  color: white;
-}
-
-.action-button.remove-from-list:hover:not(:disabled) {
-  background: #5a6268;
-}
-
-.action-button.remove-from-list:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
+/* Edit-specific action button styles */
 .action-button.increment {
   background-color: var(--success);
   color: white;
@@ -263,73 +124,7 @@
   transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-  .search-section {
-    flex-direction: column;
-  }
-
-  .search-form {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .add-card-button {
-    width: 100%;
-  }
-
-  .cards-row,
-  .cards-header {
-    grid-template-columns: 110px 1fr;
-    align-items: start;
-    row-gap: 0.75rem;
-  }
-
-  .cards-header {
-    display: none;
-  }
-
-  .col {
-    width: 100%;
-  }
-
-  .col:not(.image-col) {
-    padding-left: 0.25rem;
-  }
-
-  .cards-row .col::before {
-    content: attr(data-label);
-    display: block;
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 0.2rem;
-  }
-
-  .name-col::before {
-    display: none;
-  }
-
-  .card-actions {
-    width: 100%;
-  }
-
-  .action-button {
-    min-width: 100%;
-  }
-
-  .total-value-panel {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-
-  .total-value-label,
-  .total-value-amount {
-    text-align: left;
-  }
-}
-
+/* Total Value Panel */
 .total-value-panel {
   background-color: var(--surface);
   padding: 0.75rem 1.5rem;
@@ -380,4 +175,38 @@
 .refresh-prices-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Mobile Responsiveness - Edit-specific overrides */
+@media (max-width: 768px) {
+  .search-section {
+    flex-direction: column;
+  }
+
+  .add-card-button {
+    width: 100%;
+  }
+
+  .cards-row .col::before {
+    margin-bottom: 0.2rem;
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .action-button {
+    min-width: 100%;
+  }
+
+  .total-value-panel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .total-value-label,
+  .total-value-amount {
+    text-align: left;
+  }
 }

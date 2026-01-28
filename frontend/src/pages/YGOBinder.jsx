@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { cardService } from '../services/api';
 import { listService } from '../services/listService';
 import ListPanel from '../components/ListPanel';
+import './YGOBinderShared.css';
 import './YGOBinder.css';
 
 const YGOBinder = ({ isListOpen, toggleList }) => {

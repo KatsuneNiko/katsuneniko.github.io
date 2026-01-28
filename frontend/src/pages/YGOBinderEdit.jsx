@@ -3,6 +3,7 @@ import { cardService } from '../services/api';
 import { listService } from '../services/listService';
 import AddCardModal from '../components/AddCardModal';
 import ListPanel from '../components/ListPanel';
+import './YGOBinderShared.css';
 import './YGOBinderEdit.css';
 
 const YGOBinderEdit = ({ isListOpen, toggleList }) => {
