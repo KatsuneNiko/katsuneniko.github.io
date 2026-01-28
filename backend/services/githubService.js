@@ -88,9 +88,58 @@ export const getGitHubProfile = async () => {
       headers.Authorization = `token ${process.env.GITHUB_TOKEN}`;
     }
 
-    // Fetch user profile
-    const profileResponse = await axios.get(`${GITHUB_API}/users/${USERNAME}`, { headers });
-    const profile = profileResponse.data;
+    // Fetch user profile using GraphQL (includes pronouns)
+    const graphqlQuery = `
+      query {
+        user(login: "${USERNAME}") {
+          name
+          login
+          pronouns
+          bio
+          avatarUrl
+          url
+          repositories(first: 6, orderBy: {field: UPDATED_AT, direction: DESC}) {
+            nodes {
+              name
+              description
+              url
+              primaryLanguage {
+                name
+              }
+              stargazerCount
+              forkCount
+              updatedAt
+            }
+          }
+          followers {
+            totalCount
+          }
+          following {
+            totalCount
+          }
+          repositoriesContributedTo(first: 1) {
+            totalCount
+          }
+          location
+          websiteUrl
+          twitterUsername
+        }
+      }
+    `;
+
+    const graphqlResponse = await axios.post(
+      'https://api.github.com/graphql',
+      { query: graphqlQuery },
+      { headers: { ...headers, 'Content-Type': 'application/json' } }
+    );
+
+    if (graphqlResponse.data.errors) {
+      console.error('GraphQL errors:', graphqlResponse.data.errors);
+      throw new Error('GraphQL request failed');
+    }
+
+    const profile = graphqlResponse.data.data.user;
+    const repos = profile.repositories.nodes;
     
     console.log('GitHub profile data:', {
       name: profile.name,
@@ -99,11 +148,7 @@ export const getGitHubProfile = async () => {
       bio: profile.bio
     });
 
-    // Fetch repositories
-    const reposResponse = await axios.get(`${GITHUB_API}/users/${USERNAME}/repos?sort=updated&per_page=6`, { headers });
-    const repos = reposResponse.data;
-
-    // Fetch recent events (contributions)
+    // Fetch recent events (contributions) - still using REST API
     const eventsResponse = await axios.get(`${GITHUB_API}/users/${USERNAME}/events/public?per_page=10`, { headers });
     const events = eventsResponse.data;
 
@@ -113,22 +158,22 @@ export const getGitHubProfile = async () => {
       login: profile.login,
       pronouns: profile.pronouns,
       bio: profile.bio,
-      avatar_url: profile.avatar_url,
-      html_url: profile.html_url,
-      public_repos: profile.public_repos,
-      followers: profile.followers,
-      following: profile.following,
+      avatar_url: profile.avatarUrl,
+      html_url: profile.url,
+      public_repos: repos.length,
+      followers: profile.followers.totalCount,
+      following: profile.following.totalCount,
       location: profile.location,
-      blog: profile.blog,
-      twitter_username: profile.twitter_username,
+      blog: profile.websiteUrl,
+      twitter_username: profile.twitterUsername,
       repos: repos.map(repo => ({
         name: repo.name,
         description: repo.description,
-        html_url: repo.html_url,
-        language: repo.language,
-        stargazers_count: repo.stargazers_count,
-        forks_count: repo.forks_count,
-        updated_at: repo.updated_at
+        html_url: repo.url,
+        language: repo.primaryLanguage?.name || null,
+        stargazers_count: repo.stargazerCount,
+        forks_count: repo.forkCount,
+        updated_at: repo.updatedAt
       })),
       recentActivity: events.slice(0, 5).map(event => ({
         type: event.type,
