@@ -12,6 +12,8 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
   const [imageCache, setImageCache] = useState({});
   const [cardsInList, setCardsInList] = useState({});
   const [exchangeRate, setExchangeRate] = useState(null);
+  const [sortColumn, setSortColumn] = useState('name');
+  const [sortDirection, setSortDirection] = useState('asc');
 
   useEffect(() => {
     fetchCards();
@@ -81,6 +83,57 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
       console.error('Failed to fetch exchange rate:', err);
       setExchangeRate(1.5); // Fallback rate
     }
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortedCards = () => {
+    const sorted = [...cards].sort((a, b) => {
+      let aVal, bVal;
+
+      switch (sortColumn) {
+        case 'name':
+          aVal = a.name.toLowerCase();
+          bVal = b.name.toLowerCase();
+          break;
+        case 'set_code':
+          aVal = a.set_code.toLowerCase();
+          bVal = b.set_code.toLowerCase();
+          break;
+        case 'set_rarity':
+          aVal = a.set_rarity.toLowerCase();
+          bVal = b.set_rarity.toLowerCase();
+          break;
+        case 'tcgplayer_price':
+          aVal = a.tcgplayer_price || 0;
+          bVal = b.tcgplayer_price || 0;
+          break;
+        case 'quantity':
+          aVal = a.quantity;
+          bVal = b.quantity;
+          break;
+        default:
+          return 0;
+      }
+
+      if (aVal < bVal) return sortDirection === 'asc' ? -1 : 1;
+      if (aVal > bVal) return sortDirection === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    return sorted;
+  };
+
+  const getSortArrow = (column) => {
+    if (sortColumn !== column) return ' ↕';
+    return sortDirection === 'asc' ? ' ↓' : ' ↑';
   };
 
   const handleAddToList = (card) => {
@@ -157,15 +210,25 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
           <div className="cards-table" role="table">
             <div className="cards-row cards-header with-actions" role="row">
               <div className="col image-col" role="columnheader">Card</div>
-              <div className="col name-col" role="columnheader">Name</div>
-              <div className="col set-col" role="columnheader">Set Code</div>
-              <div className="col rarity-col" role="columnheader">Rarity</div>
-              <div className="col price-col" role="columnheader">Price</div>
-              <div className="col quantity-col" role="columnheader">Qty</div>
+              <div className="col name-col sortable" role="columnheader" onClick={() => handleSort('name')} style={{cursor: 'pointer'}}>
+                Name{getSortArrow('name')}
+              </div>
+              <div className="col set-col sortable" role="columnheader" onClick={() => handleSort('set_code')} style={{cursor: 'pointer'}}>
+                Set Code{getSortArrow('set_code')}
+              </div>
+              <div className="col rarity-col sortable" role="columnheader" onClick={() => handleSort('set_rarity')} style={{cursor: 'pointer'}}>
+                Rarity{getSortArrow('set_rarity')}
+              </div>
+              <div className="col price-col sortable" role="columnheader" onClick={() => handleSort('tcgplayer_price')} style={{cursor: 'pointer'}}>
+                Price{getSortArrow('tcgplayer_price')}
+              </div>
+              <div className="col quantity-col sortable" role="columnheader" onClick={() => handleSort('quantity')} style={{cursor: 'pointer'}}>
+                Qty{getSortArrow('quantity')}
+              </div>
               <div className="col actions-col" role="columnheader">Actions</div>
             </div>
 
-            {cards.map((card) => {
+            {getSortedCards().map((card) => {
               const imageSrc = getCardImage(card);
               const inList = isCardInList(card);
 
