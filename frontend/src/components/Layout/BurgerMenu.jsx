@@ -28,15 +28,15 @@ const BurgerMenu = ({ isOpen, toggleMenu }) => {
           </Link>
         </li>
         <li>
-          <Link to="/binder" onClick={handleNavClick}>
-            🃏 Yu-Gi-Oh Binder
+          <Link to="/ygo-binder" onClick={handleNavClick}>
+            🃏 YGOBinder
           </Link>
         </li>
         {isAuthenticated ? (
           <>
             <li>
-              <Link to="/binder/edit" onClick={handleNavClick}>
-                ✏️ Edit Yu-Gi-Oh Binder
+              <Link to="/ygo-binder/edit" onClick={handleNavClick}>
+                ✏️ YGOBinder/Edit
               </Link>
             </li>
             <li>

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Home from './pages/Home';
@@ -11,21 +11,30 @@ function AppContent() {
   const [isListOpen, setIsListOpen] = useState(false);
   const location = useLocation();
 
+  // Handle redirect from 404.html
+  useEffect(() => {
+    const redirectPath = sessionStorage.getItem('redirectPath');
+    if (redirectPath) {
+      sessionStorage.removeItem('redirectPath');
+      window.history.replaceState(null, '', redirectPath);
+    }
+  }, []);
+
   const toggleList = () => {
     setIsListOpen(!isListOpen);
   };
 
-  // Only show list toggle on binder and binder edit pages
-  const showListToggle = location.pathname === '/binder' || location.pathname === '/binder/edit';
+  // Only show list toggle on YGO Binder and YGO Binder edit pages
+  const showListToggle = location.pathname === '/ygo-binder' || location.pathname === '/ygo-binder/edit';
 
   return (
     <Layout showListToggle={showListToggle} isListOpen={isListOpen} toggleList={toggleList}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/binder" element={<Binder isListOpen={isListOpen} toggleList={toggleList} />} />
+        <Route path="/ygo-binder" element={<Binder isListOpen={isListOpen} toggleList={toggleList} />} />
         <Route path="/login" element={<Login />} />
         <Route 
-          path="/binder/edit" 
+          path="/ygo-binder/edit" 
           element={
             <ProtectedRoute>
               <BinderEdit isListOpen={isListOpen} toggleList={toggleList} />
