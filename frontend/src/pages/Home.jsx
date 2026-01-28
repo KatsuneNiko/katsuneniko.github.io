@@ -157,7 +157,7 @@ const Home = () => {
       <div className="repos-section">
         <h3>Recent Repositories</h3>
         <div className="repos-grid">
-          {profile.repos && profile.repos.map((repo, index) => (
+          {profile.repos && profile.repos.slice(0, 6).map((repo, index) => (
             <a 
               key={index}
               href={repo.html_url}
@@ -182,13 +182,21 @@ const Home = () => {
             </a>
           ))}
         </div>
+        <a 
+          href="https://github.com/KatsuneNiko?tab=repositories" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="view-all-repos-button"
+        >
+          View all repositories →
+        </a>
       </div>
 
       {profile.recentActivity && profile.recentActivity.length > 0 && (
         <div className="activity-section">
           <h3>Recent Activity</h3>
           <ul className="activity-list">
-            {profile.recentActivity.map((activity, index) => (
+            {profile.recentActivity.slice(0, 3).map((activity, index) => (
               <li key={index} className="activity-item">
                 <span className="activity-type">{activity.type.replace('Event', '')}</span>
                 <span className="activity-repo">{activity.repo}</span>
