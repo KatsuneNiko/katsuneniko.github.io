@@ -155,14 +155,20 @@ const YGOBinder = ({ isListOpen, toggleList }) => {
                     <div className="list-actions">
                       <button 
                         className="action-button add-to-list"
-                        onClick={() => handleAddToList(card)}
+                        onClick={() => {
+                          handleAddToList(card);
+                          if (!isListOpen) toggleList();
+                        }}
                         title="Add to list"
                       >
                         Add to List
                       </button>
                       <button 
                         className="action-button remove-from-list"
-                        onClick={() => handleRemoveFromList(card)}
+                        onClick={() => {
+                          handleRemoveFromList(card);
+                          if (!isListOpen) toggleList();
+                        }}
                         disabled={!inList}
                         title="Remove from list"
                       >
