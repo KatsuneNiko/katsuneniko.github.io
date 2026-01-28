@@ -99,6 +99,7 @@ export const getGitHubProfile = async () => {
           avatarUrl
           url
           repositories(first: 100, orderBy: {field: UPDATED_AT, direction: DESC}) {
+            totalCount
             nodes {
               name
               description
@@ -160,7 +161,7 @@ export const getGitHubProfile = async () => {
       bio: profile.bio,
       avatar_url: profile.avatarUrl,
       html_url: profile.url,
-      public_repos: repos.length,
+      public_repos: profile.repositories.totalCount,
       followers: profile.followers.totalCount,
       following: profile.following.totalCount,
       location: profile.location,
