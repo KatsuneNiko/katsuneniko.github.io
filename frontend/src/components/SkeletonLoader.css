@@ -92,7 +92,7 @@
 }
 
 .skeleton-refresh-button {
-  width: 120px;
+  width: 130px;
   height: 44px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
@@ -105,9 +105,9 @@
 .skeleton-stats {
   display: flex;
   gap: 2rem;
-  margin: 2rem 0 1.25rem 0;
+  margin: 2rem 0 2rem 0;
   justify-content: center;
-  padding: 1.75rem;
+  padding: 2rem;
   background-color: var(--background);
   border-radius: 8px;
 }
@@ -118,18 +118,20 @@
 }
 
 .skeleton-stat-number {
-  width: 80px;
+  width: 60px;
   height: 32px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
   margin-bottom: 0.5rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skeleton-stat-label {
   width: 100px;
-  height: 16px;
+  height: 20px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
@@ -137,13 +139,13 @@
 }
 
 .skeleton-link {
-  width: 200px;
-  height: 44px;
+  width: 230px;
+  height: 55px;
   background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: 4px;
-  margin: 1.75rem auto 1.5rem;
+  margin: 2rem auto 0.20rem;
 }
 
 /* Repos Section */
