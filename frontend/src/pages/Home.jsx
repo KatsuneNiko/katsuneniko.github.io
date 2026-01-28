@@ -103,7 +103,12 @@ const Home = () => {
             <h2 className="profile-name">{profile.name}</h2>
             <div className="profile-meta">
               <p className="profile-username">@{profile.login}</p>
-              {profile.pronouns && <p className="profile-pronouns">{profile.pronouns}</p>}
+              {profile.pronouns && (
+                <>
+                  <span className="profile-separator">·</span>
+                  <p className="profile-pronouns">{profile.pronouns}</p>
+                </>
+              )}
             </div>
             {profile.bio && <p className="profile-bio">{profile.bio}</p>}
           </div>

@@ -74,10 +74,11 @@
 .profile-meta {
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin-bottom: 0.75rem;
   opacity: 0.75;
   align-items: center;
+  justify-content: center;
 }
 
 .profile-username {
@@ -87,12 +88,17 @@
   font-weight: 400;
 }
 
+.profile-separator {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin: 0;
+}
+
 .profile-pronouns {
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.9rem;
   margin: 0;
-  font-style: italic;
-  opacity: 0.85;
+  font-weight: 400;
 }
 
 .profile-bio {
