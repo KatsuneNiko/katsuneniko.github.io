@@ -74,6 +74,15 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
     
     const results = await listService.importFromCSV(importText, cards);
     setImportResults(results);
+
+    // Close modal after successful import (if any cards were added)
+    if (results.success.length > 0 || results.partialSuccess.length > 0) {
+      setTimeout(() => {
+        setShowImportModal(false);
+        setImportText('');
+        setImportResults(null);
+      }, 1500);
+    }
   };
 
   const getTotalPrice = () => {
@@ -83,6 +92,11 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
   const formatPrice = (price) => {
     if (!price || price === 0) return 'N/A';
     return `$${price.toFixed(2)} ea`;
+  };
+
+  const formatTotalPrice = (price) => {
+    if (!price || price === 0) return 'N/A';
+    return `$${price.toFixed(2)}`;
   };
 
   return (
@@ -159,7 +173,7 @@ const ListPanel = ({ isOpen, onClose, showBinderActions = false, onAddToBinder, 
               <div className="list-footer">
                 <div className="list-total">
                   <span className="total-label">Total Price:</span>
-                  <span className="total-value">{formatPrice(getTotalPrice())}</span>
+                  <span className="total-value">{formatTotalPrice(getTotalPrice())}</span>
                 </div>
 
                 <button className="clear-all-btn" onClick={handleClearAll}>
